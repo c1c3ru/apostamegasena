@@ -1,7 +1,8 @@
 name: gerador_de_apostas
-description: Um gerador de apostas para a Mega Sena.
+description: Gerador inteligente de apostas para Mega-Sena, Lotofácil, Quina e Dupla Sena com análise estatística e histórico.
 
-publish_to: 'none'
+# Remove publish_to para permitir publicação
+# publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -25,10 +26,20 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_launcher_icons: ^0.14.4
 
+  # Persistência local
+  shared_preferences: ^2.2.2
+
+  # Compartilhamento
+  share_plus: ^7.2.1
+
+  # Formatação de datas
+  intl: ^0.18.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  bloc_test: ^9.1.5
 
 flutter:
   uses-material-design: true

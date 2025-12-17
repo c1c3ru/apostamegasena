@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+// =========================================================================
+// ARQUIVO: test/widget_test.dart
+// =========================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:apostamegasena/main.dart';
+import 'package:gerador_de_apostas/app/app_widget.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:gerador_de_apostas/app/app_module.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Deve exibir título do app corretamente', (WidgetTester tester) async {
+    // Arrange & Act
+    await tester.pumpWidget(ModularApp(module: AppModule(), child: const AppWidget()));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Assert
+    expect(find.text('🍀 Gerador de Apostas'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('Deve exibir botão de gerar apostas', (WidgetTester tester) async {
+    // Arrange & Act
+    await tester.pumpWidget(ModularApp(module: AppModule(), child: const AppWidget()));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Assert
+    expect(find.text('GERAR APOSTAS'), findsOneWidget);
+  });
+
+  testWidgets('Deve exibir dropdown de seleção de loteria', (WidgetTester tester) async {
+    // Arrange & Act
+    await tester.pumpWidget(ModularApp(module: AppModule(), child: const AppWidget()));
+
+    // Assert
+    expect(find.byType(DropdownButtonFormField<dynamic>), findsOneWidget);
   });
 }

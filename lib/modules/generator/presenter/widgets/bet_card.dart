@@ -2,6 +2,7 @@
 // ARQUIVO: lib/modules/generator/presenter/widgets/bet_card.dart
 // =========================================================================
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class BetCard extends StatelessWidget {
   final int betIndex;
@@ -15,6 +16,25 @@ class BetCard extends StatelessWidget {
     required this.lotteryColor,
   }) : super(key: key);
 
+  void _copiarAposta(BuildContext context) {
+    // Formatar números com zero à esquerda e separar por vírgula
+    final numerosFormatados = numbers.map((n) => n.toString().padLeft(2, '0')).join(', ');
+    final textoAposta = 'Aposta #$betIndex: $numerosFormatados';
+    
+    // Copiar para clipboard
+    Clipboard.setData(ClipboardData(text: textoAposta));
+    
+    // Mostrar feedback visual
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Aposta #$betIndex copiada!'),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: lotteryColor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -27,13 +47,25 @@ class BetCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Aposta ${betIndex.toString().padLeft(2, '0')}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: lotteryColor,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Aposta ${betIndex.toString().padLeft(2, '0')}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: lotteryColor,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.copy, color: lotteryColor, size: 20),
+                  onPressed: () => _copiarAposta(context),
+                  tooltip: 'Copiar aposta',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Wrap(

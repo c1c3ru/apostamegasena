@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../../app/app_widget.dart';
 import '../data/number_lists.dart';
 import './bloc/generator_bloc.dart';
 import '../domain/entities/lottery.dart';
+import '../domain/usecases/generate_bets.dart';
 import './widgets/bet_card.dart';
 
 class GeneratorPage extends StatefulWidget {
@@ -21,12 +24,29 @@ class _GeneratorPageState extends State<GeneratorPage> {
   final _bloc = Modular.get<GeneratorBloc>();
   final _numberOfBetsController = TextEditingController(text: '1');
   LotteryType _selectedLottery = LotteryType.megaSena;
+  GenerationStrategy _selectedStrategy = GenerationStrategy.frequentOnly;
 
   @override
   void dispose() {
     _numberOfBetsController.dispose();
     _bloc.close();
     super.dispose();
+  }
+
+  void _compartilharApostas(List<List<int>> bets, String lotteryName) {
+    final buffer = StringBuffer();
+    buffer.writeln('🍀 Minhas Apostas - $lotteryName');
+    buffer.writeln('');
+    
+    for (int i = 0; i < bets.length; i++) {
+      final numerosFormatados = bets[i].map((n) => n.toString().padLeft(2, '0')).join(', ');
+      buffer.writeln('Aposta ${(i + 1).toString().padLeft(2, '0')}: $numerosFormatados');
+    }
+    
+    buffer.writeln('');
+    buffer.writeln('Gerado pelo app Gerador de Apostas');
+    
+    Share.share(buffer.toString(), subject: 'Minhas Apostas - $lotteryName');
   }
 
   @override
@@ -36,6 +56,29 @@ class _GeneratorPageState extends State<GeneratorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🍀 Gerador de Apostas'),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              final themeManager = ThemeManagerProvider.of(context);
+              themeManager?.toggleTheme();
+            },
+            tooltip: Theme.of(context).brightness == Brightness.dark
+                ? 'Modo claro'
+                : 'Modo escuro',
+          ),
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Modular.to.pushNamed('/history');
+            },
+            tooltip: 'Histórico',
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -59,6 +102,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 _bloc.add(BetsGenerated(
                   lotteryType: _selectedLottery,
                   numberOfBets: numberOfBets.clamp(1, 20),
+                  strategy: _selectedStrategy,
                 ));
               },
             ),
@@ -100,12 +144,41 @@ class _GeneratorPageState extends State<GeneratorPage> {
               },
             ),
             const SizedBox(height: 20),
-            Text('2. Quantas apostas? (1-20)', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            Text('2. Estratégia de geração', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<GenerationStrategy>(
+              value: _selectedStrategy,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: GenerationStrategy.frequentOnly,
+                  child: Text('Apenas números frequentes'),
+                ),
+                DropdownMenuItem(
+                  value: GenerationStrategy.allNumbers,
+                  child: Text('Todos os números'),
+                ),
+                DropdownMenuItem(
+                  value: GenerationStrategy.mixed,
+                  child: Text('Misto (50% frequentes + 50% aleatórios)'),
+                ),
+              ],
+              onChanged: (strategy) {
+                if (strategy != null) {
+                  setState(() => _selectedStrategy = strategy);
+                }
+              },
+            ),
             const SizedBox(height: 8),
             Text(
-              'As apostas são geradas usando os números mais recorrentes de cada concurso.',
+              _getStrategyDescription(),
               style: Theme.of(context).textTheme.bodySmall,
             ),
+            const SizedBox(height: 20),
+            Text('3. Quantas apostas? (1-20)', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             TextField(
               controller: _numberOfBetsController,
@@ -123,6 +196,17 @@ class _GeneratorPageState extends State<GeneratorPage> {
     );
   }
 
+  String _getStrategyDescription() {
+    switch (_selectedStrategy) {
+      case GenerationStrategy.frequentOnly:
+        return 'Usa apenas os números mais sorteados historicamente.';
+      case GenerationStrategy.allNumbers:
+        return 'Usa todos os números disponíveis da loteria.';
+      case GenerationStrategy.mixed:
+        return 'Combina números frequentes com números aleatórios.';
+    }
+  }
+
   Widget _buildResults() {
     return BlocBuilder<GeneratorBloc, GeneratorState>(
       bloc: _bloc,
@@ -134,9 +218,48 @@ class _GeneratorPageState extends State<GeneratorPage> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(
-                'Apostas Geradas (${state.lotteryName})',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Apostas Geradas (${state.lotteryName})',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.compare_arrows),
+                        onPressed: () {
+                          final lottery = Lottery.fromType(_selectedLottery);
+                          Modular.to.pushNamed('/comparison', arguments: {
+                            'bets': state.bets,
+                            'lottery': lottery,
+                          });
+                        },
+                        tooltip: 'Comparar com resultado',
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.bar_chart),
+                        onPressed: () {
+                          final lottery = Lottery.fromType(_selectedLottery);
+                          Modular.to.pushNamed('/statistics', arguments: {
+                            'bets': state.bets,
+                            'lottery': lottery,
+                          });
+                        },
+                        tooltip: 'Ver estatísticas',
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.share),
+                        onPressed: () => _compartilharApostas(state.bets, state.lotteryName),
+                        tooltip: 'Compartilhar todas',
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               ListView.separated(

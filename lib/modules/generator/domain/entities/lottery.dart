@@ -11,13 +11,20 @@ class Lottery extends Equatable {
   final String name;
   final int numbersToPick;
   final List<int> mostFrequentNumbers;
+  final int minNumber; // Número mínimo da loteria (ex: 1)
+  final int maxNumber; // Número máximo da loteria (ex: 60 para Mega-Sena)
 
   const Lottery({
     required this.type,
     required this.name,
     required this.numbersToPick,
     required this.mostFrequentNumbers,
+    this.minNumber = 1,
+    this.maxNumber = 60,
   });
+
+  // Retorna lista completa de números disponíveis (ex: [1, 2, 3, ..., 60])
+  List<int> get allNumbers => List.generate(maxNumber - minNumber + 1, (i) => minNumber + i);
 
   static Lottery fromType(LotteryType type) {
     switch (type) {
@@ -33,5 +40,5 @@ class Lottery extends Equatable {
   }
 
   @override
-  List<Object?> get props => [type, name, numbersToPick, mostFrequentNumbers];
+  List<Object?> get props => [type, name, numbersToPick, mostFrequentNumbers, minNumber, maxNumber];
 }

@@ -13,9 +13,14 @@ abstract class GeneratorEvent extends Equatable {
 class BetsGenerated extends GeneratorEvent {
   final LotteryType lotteryType;
   final int numberOfBets;
+  final GenerationStrategy strategy;
 
-  const BetsGenerated({required this.lotteryType, required this.numberOfBets});
+  const BetsGenerated({
+    required this.lotteryType,
+    required this.numberOfBets,
+    this.strategy = GenerationStrategy.frequentOnly,
+  });
 
   @override
-  List<Object> get props => [lotteryType, numberOfBets];
+  List<Object> get props => [lotteryType, numberOfBets, strategy];
 }
