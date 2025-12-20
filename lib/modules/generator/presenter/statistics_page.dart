@@ -17,7 +17,11 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stats = BetStatistics.analyze(bets, lottery.maxNumber);
+    final stats = BetStatistics.analyze(
+      bets, 
+      lottery.maxNumber, 
+      isTimemania: lottery.type == LotteryType.timemania,
+    );
 
     return Scaffold(
       appBar: AppBar(

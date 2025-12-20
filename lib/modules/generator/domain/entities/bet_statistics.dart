@@ -30,7 +30,7 @@ class BetStatistics {
   double get highPercentage => totalNumbers > 0 ? (highCount / totalNumbers) * 100 : 0;
   double get lowPercentage => totalNumbers > 0 ? (lowCount / totalNumbers) * 100 : 0;
 
-  static BetStatistics analyze(List<List<int>> bets, int maxNumber) {
+  static BetStatistics analyze(List<List<int>> bets, int maxNumber, {bool isTimemania = false}) {
     if (bets.isEmpty) {
       return BetStatistics(
         totalBets: 0,
@@ -56,7 +56,10 @@ class BetStatistics {
 
     // Analisar todas as apostas
     for (final bet in bets) {
-      for (final number in bet) {
+      // Se for Timemania, ignorar o último número (que é o Time do Coração)
+      final List<int> numbersToAnalyze = isTimemania ? bet.sublist(0, bet.length - 1) : bet;
+
+      for (final number in numbersToAnalyze) {
         totalNumbers++;
         
         // Contar frequência

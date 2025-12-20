@@ -8,18 +8,28 @@ class BetCard extends StatelessWidget {
   final int betIndex;
   final List<int> numbers;
   final Color lotteryColor;
+  final String? teamName; // Adicionado para Timemania
 
   const BetCard({
     Key? key,
     required this.betIndex,
     required this.numbers,
     required this.lotteryColor,
+    this.teamName,
   }) : super(key: key);
 
   void _copiarAposta(BuildContext context) {
-    // Formatar números com zero à esquerda e separar por vírgula
-    final numerosFormatados = numbers.map((n) => n.toString().padLeft(2, '0')).join(', ');
-    final textoAposta = 'Aposta #$betIndex: $numerosFormatados';
+    // Para Timemania, os números são os primeiros 10, o time é o último (se presente na lista)
+    // ou usamos o teamName se passado.
+    final List<int> dezenas = teamName != null ? numbers.sublist(0, numbers.length - 1) : numbers;
+    final String? time = teamName;
+
+    final numerosFormatados = dezenas.map((n) => n.toString().padLeft(2, '0')).join(', ');
+    String textoAposta = 'Aposta #$betIndex: $numerosFormatados';
+    
+    if (time != null) {
+      textoAposta += ' | Time: $time';
+    }
     
     // Copiar para clipboard
     Clipboard.setData(ClipboardData(text: textoAposta));
@@ -37,6 +47,10 @@ class BetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Se for Timemania, o último número é o time
+    final bool isTimemania = teamName != null;
+    final List<int> dezenas = isTimemania ? numbers.sublist(0, numbers.length - 1) : numbers;
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -71,7 +85,7 @@ class BetCard extends StatelessWidget {
             Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
-              children: numbers
+              children: dezenas
                   .map((number) => CircleAvatar(
                         radius: 18,
                         backgroundColor: lotteryColor,
@@ -86,6 +100,33 @@ class BetCard extends StatelessWidget {
                       ))
                   .toList(),
             ),
+            if (isTimemania) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: lotteryColor.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: lotteryColor.withAlpha(100)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.favorite, color: Colors.red, size: 16),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Time: $teamName',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: lotteryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),

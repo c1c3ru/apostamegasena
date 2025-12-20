@@ -75,5 +75,38 @@ class LotteryData {
     ],
   );
 
-  static const List<Lottery> allLotteries = [megaSena, lotofacil, quina, duplaSena];
+  static const Lottery timemania = Lottery(
+    type: LotteryType.timemania,
+    name: 'Timemania',
+    numbersToPick: 10,
+    minNumber: 1,
+    maxNumber: 80,
+    // Dados fornecidos pelo usuário
+    mostFrequentNumbers: [
+      21, 70, 20, 61, 71, 66, 72, 69, 80, 12, // Top 10
+      4, 50, 28, 79, 6                        // Top 15
+    ],
+  );
+
+  // Lista de Times do Coração (Biênio 2024-2026)
+  static const Map<int, String> timemaniaClubs = {
+    1: 'ABC/RN', 2: 'ALTOS/PI', 3: 'AMAZONAS/AM', 4: 'AMÉRICA/MG', 5: 'AMÉRICA/RN',
+    6: 'APARECIDENSE/GO', 7: 'ATHLETIC CLUB/MG', 8: 'ATHLETICO/PR', 9: 'ATLÉTICO/GO', 10: 'ATLÉTICO MINEIRO/MG',
+    11: 'AVAÍ/SC', 12: 'BAHIA/BA', 13: 'BAHIA DE FEIRA/BA', 14: 'BOTAFOGO/PB', 15: 'BOTAFOGO/RJ',
+    16: 'BOTAFOGO/SP', 17: 'BRAGANTINO/SP', 18: 'BRASIL/RS', 19: 'BRASILIENSE/DF', 20: 'BRUSQUE/SC',
+    21: 'CAMPINENSE/PB', 22: 'CASCAVEL/PR', 23: 'CAXIAS/RS', 24: 'CEARÁ/CE', 25: 'CEILÂNDIA/DF',
+    26: 'CHAPECOENSE/SC', 27: 'CONFIANÇA/SE', 28: 'CORINTHIANS/SP', 29: 'CORITIBA/PR', 30: 'CRB/AL',
+    31: 'CRICIÚMA/SC', 32: 'CRUZEIRO/MG', 33: 'CSA/AL', 34: 'CUIABÁ/MT', 35: 'FERROVIÁRIA/SP',
+    36: 'FERROVIÁRIO/CE', 37: 'FIGUEIRENSE/SC', 38: 'FLAMENGO/RJ', 39: 'FLORESTA/CE', 40: 'FLUMINENSE/RJ',
+    41: 'FORTALEZA/CE', 42: 'GOIÁS/GO', 43: 'GRÊMIO/RS', 44: 'GUARANI/SP', 45: 'INTERNACIONAL/RS',
+    46: 'ITUANO/SP', 47: 'JACUIPENSE/BA', 48: 'JUAZEIRENSE/BA', 49: 'JUVENTUDE/RS', 50: 'LONDRINA/PR',
+    51: 'MANAUS/AM', 52: 'MIRASSOL/SP', 53: 'NÁUTICO/PE', 54: 'NOVA IGUAÇU/RJ', 55: 'NOVORIZONTINO/SP',
+    56: 'OESTE/SP', 57: 'OPERÁRIO/PR', 58: 'PALMEIRAS/SP', 59: 'PARANÁ/PR', 60: 'PAYSANDU/PA',
+    61: 'PONTE PRETA/SP', 62: 'PORTUGUESA/RJ', 63: 'POUSO ALEGRE/MG', 64: 'REMO/PA', 65: 'RETRÔ/PE',
+    66: 'SAMPAIO CORRÊA/MA', 67: 'SANTA CRUZ/PE', 68: 'SANTOS/SP', 69: 'SÃO BENTO/SP', 70: 'SÃO BERNARDO/SP',
+    71: 'SÃO CAETANO/SP', 72: 'SÃO PAULO/SP', 73: 'SERGIPE/SE', 74: 'SPORT/PE', 75: 'TOMBENSE/MG',
+    76: 'TREZE/PB', 77: 'TUNA LUSO/PA', 78: 'VASCO/RJ', 79: 'VILA NOVA/GO', 80: 'VITÓRIA/BA',
+  };
+
+  static const List<Lottery> allLotteries = [megaSena, lotofacil, quina, duplaSena, timemania];
 }

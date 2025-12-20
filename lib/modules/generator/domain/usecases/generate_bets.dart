@@ -48,8 +48,16 @@ class GenerateBetsUsecase {
       }
 
       singleBet.sort();
+
+      // Para Timemania, adicionar o Time do Coração como o último elemento (11º)
+      if (lottery.type == LotteryType.timemania) {
+        final int teamIndex = random.nextInt(80) + 1;
+        singleBet.add(teamIndex);
+      }
       
       // Converter aposta para string para verificar duplicata
+      // Nota: para Timemania, as dezenas vêm antes do time. 
+      // O join vai incluir o time no final.
       final String betKey = singleBet.join(',');
       
       // Adicionar apenas se não for duplicata

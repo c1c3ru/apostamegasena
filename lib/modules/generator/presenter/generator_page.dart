@@ -269,10 +269,26 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
                   final lottery = Lottery.fromType(_selectedLottery);
+                  final lotteryColor = lottery.type == LotteryType.lotofacil 
+                      ? Colors.purple.shade700 
+                      : lottery.type == LotteryType.quina 
+                          ? Colors.blue.shade800 
+                          : lottery.type == LotteryType.timemania
+                              ? Colors.orange.shade800
+                              : Theme.of(context).colorScheme.primary;
+
+                  String? teamName;
+                  if (lottery.type == LotteryType.timemania) {
+                    final bet = state.bets[index];
+                    final teamIndex = bet.last;
+                    teamName = LotteryData.timemaniaClubs[teamIndex];
+                  }
+
                   return BetCard(
                     betIndex: index + 1,
                     numbers: state.bets[index],
-                    lotteryColor: lottery.type == LotteryType.lotofacil ? Colors.purple.shade700 : lottery.type == LotteryType.quina ? Colors.blue.shade800 : Theme.of(context).colorScheme.primary,
+                    lotteryColor: lotteryColor,
+                    teamName: teamName,
                   );
                 },
               ),

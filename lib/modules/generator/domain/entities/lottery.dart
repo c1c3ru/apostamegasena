@@ -4,7 +4,7 @@
 import 'package:equatable/equatable.dart';
 import '../../data/number_lists.dart';
 
-enum LotteryType { megaSena, lotofacil, quina, duplaSena }
+enum LotteryType { megaSena, lotofacil, quina, duplaSena, timemania }
 
 class Lottery extends Equatable {
   final LotteryType type;
@@ -36,6 +36,8 @@ class Lottery extends Equatable {
         return LotteryData.quina;
       case LotteryType.duplaSena:
         return LotteryData.duplaSena;
+      case LotteryType.timemania:
+        return LotteryData.timemania;
     }
   }
 

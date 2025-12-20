@@ -67,7 +67,9 @@ class _ComparisonPageState extends State<ComparisonPage> {
     final matchCounts = <int, int>{};
     for (int i = 0; i < widget.bets.length; i++) {
       final bet = widget.bets[i];
-      final matches = bet.where((n) => numbers.contains(n)).length;
+      // Se for Timemania, ignorar o 11º número (time) na comparação de dezenas
+      final betToCompare = widget.lottery.type == LotteryType.timemania ? bet.sublist(0, bet.length - 1) : bet;
+      final matches = betToCompare.where((n) => numbers.contains(n)).length;
       matchCounts[i] = matches;
     }
 
@@ -99,6 +101,11 @@ class _ComparisonPageState extends State<ComparisonPage> {
   }
 
   Color _getMatchColor(int matches) {
+    if (widget.lottery.type == LotteryType.timemania) {
+      if (matches >= 7) return Colors.green;
+      if (matches >= 3) return Colors.orange;
+      return Colors.grey;
+    }
     if (matches >= widget.lottery.numbersToPick - 1) return Colors.green;
     if (matches >= widget.lottery.numbersToPick - 2) return Colors.orange;
     return Colors.grey;
@@ -129,6 +136,13 @@ class _ComparisonPageState extends State<ComparisonPage> {
         if (matches == 5) return '🎊 QUINA';
         if (matches == 4) return '👏 QUADRA';
         if (matches == 3) return 'TERNO';
+        break;
+      case LotteryType.timemania:
+        if (matches == 7) return '🎉 7 ACERTOS!';
+        if (matches == 6) return '🎊 6 ACERTOS';
+        if (matches == 5) return '👏 5 ACERTOS';
+        if (matches == 4) return '4 ACERTOS';
+        if (matches == 3) return '3 ACERTOS';
         break;
     }
     return '$matches acertos';

@@ -7,6 +7,7 @@ import '../data/repositories/bet_history_repository.dart';
 import '../domain/entities/bet_history.dart';
 import './widgets/bet_card.dart';
 import '../domain/entities/lottery.dart';
+import '../data/number_lists.dart';
 
 class HistoryPage extends StatefulWidget {
   final BetHistoryRepository repository;
@@ -94,6 +95,8 @@ class _HistoryPageState extends State<HistoryPage> {
         return Colors.blue.shade800;
       case LotteryType.duplaSena:
         return Colors.red.shade700;
+      case LotteryType.timemania:
+        return Colors.orange.shade800;
     }
   }
 
@@ -170,11 +173,11 @@ class _HistoryPageState extends State<HistoryPage> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: _getLotteryColor(item.lotteryType).withOpacity(0.1),
+                              color: _getLotteryColor(item.lotteryType).withValues(alpha: 0.1),
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(12),
                                 topRight: Radius.circular(12),
-                              ),
+                               ),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,6 +228,12 @@ class _HistoryPageState extends State<HistoryPage> {
                               children: item.bets.asMap().entries.map((entry) {
                                 final betIndex = entry.key + 1;
                                 final numbers = entry.value;
+
+                                String? teamName;
+                                if (item.lotteryType == LotteryType.timemania && numbers.length == 11) {
+                                  final teamIndex = numbers.last;
+                                  teamName = LotteryData.timemaniaClubs[teamIndex];
+                                }
                                 
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 8),
@@ -232,6 +241,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                     betIndex: betIndex,
                                     numbers: numbers,
                                     lotteryColor: _getLotteryColor(item.lotteryType),
+                                    teamName: teamName,
                                   ),
                                 );
                               }).toList(),
