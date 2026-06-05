@@ -5,8 +5,8 @@
 import '../domain/entities/lottery.dart';
 
 class LotteryData {
-  // Dados atualizados em: Dezembro/2025
-  // Fonte: Estatísticas históricas dos concursos da Mega-Sena
+  // Dados atualizados em: Junho/2026 (concurso 3014)
+  // Fonte: https://www.somatematica.com.br/megasenaFrequentes.php
   static const Lottery megaSena = Lottery(
     type: LotteryType.megaSena,
     name: 'Mega-Sena',
@@ -15,17 +15,17 @@ class LotteryData {
     maxNumber: 60,
     // Todos os 60 números ordenados por frequência (do mais ao menos sorteado)
     mostFrequentNumbers: [
-      10, 53, 5, 37, 34, 33, 23, 4, 42, 30,  // Top 10
-      44, 32, 35, 27, 41, 17, 38, 56, 43, 28, // Top 20
-      16, 54, 11, 51, 29, 36, 52, 49, 2, 46,  // Top 30
-      8, 59, 45, 50, 6, 40, 24, 58, 1, 13,    // Top 40
-      20, 12, 18, 47, 31, 19, 60, 39, 7, 57,  // Top 50
-      25, 48, 14, 9, 3, 22, 15, 55, 21, 26    // Top 60
+      10, 53, 37, 5, 27, 32, 34, 38, 42, 33,  // Top 10
+      44, 17, 30, 4, 35, 46, 23, 56, 43, 11,  // Top 20
+      41, 54, 28, 13, 16, 36, 49, 52, 6, 51,   // Top 30
+      24, 2, 8, 29, 50, 14, 1, 25, 45, 20,    // Top 40
+      19, 60, 9, 59, 58, 47, 18, 57, 39, 40,  // Top 50
+      7, 12, 3, 48, 31, 15, 22, 55, 21, 26    // Top 60
     ],
   );
 
-  // Dados atualizados em: Dezembro/2025
-  // Fonte: Estatísticas históricas dos concursos
+  // Dados atualizados em: Junho/2026 (concurso 3702)
+  // Fonte: https://www.somatematica.com.br/lotofacilFrequentes.php
   static const Lottery lotofacil = Lottery(
     type: LotteryType.lotofacil,
     name: 'Lotofácil',
@@ -34,12 +34,14 @@ class LotteryData {
     maxNumber: 25,
     // Todos os 25 números ordenados por frequência
     mostFrequentNumbers: [
-      20, 25, 10, 11, 13, 14, 24, 3, 5, 4,   // Top 10
-      12, 9, 22, 2, 1, 19, 18, 15, 21, 23,  // Top 20
-      6, 8, 17, 7, 16                        // Top 25
+      20, 10, 25, 11, 13, 24, 1, 4, 14, 3,    // Top 10
+      12, 5, 2, 22, 9, 15, 19, 18, 21, 7,    // Top 20
+      6, 17, 23, 8, 16                        // Top 25
     ],
   );
 
+  // Dados atualizados em: Junho/2026 (concurso 7042)
+  // Fonte: https://www.somatematica.com.br/quinaFrequentes.php
   static const Lottery quina = Lottery(
     type: LotteryType.quina,
     name: 'Quina',
@@ -48,17 +50,20 @@ class LotteryData {
     maxNumber: 80,
     // Todos os 80 números ordenados por frequência
     mostFrequentNumbers: [
-      4, 49, 26, 31, 39, 52, 53, 44, 16, 29,   // Top 10
-      42, 56, 38, 61, 10, 18, 5, 66, 9, 13,    // Top 20
-      73, 33, 15, 70, 37, 72, 64, 12, 74, 79,  // Top 30
-      54, 14, 34, 40, 55, 71, 75, 46, 60, 11,  // Top 40
-      76, 2, 28, 45, 27, 19, 36, 80, 8, 77,    // Top 50
-      59, 6, 7, 21, 32, 69, 51, 20, 62, 63,    // Top 60
-      35, 25, 50, 41, 43, 78, 1, 22, 57, 68,   // Top 70
-      67, 30, 58, 17, 23, 65, 24, 48, 47, 3    // Top 80
+      4, 26, 52, 49, 44, 31, 29, 16, 56, 42,   // Top 10
+      39, 53, 5, 15, 9, 33, 66, 18, 10, 37,    // Top 20
+      73, 38, 13, 14, 61, 72, 40, 54, 70, 12,  // Top 30
+      60, 45, 64, 74, 55, 6, 79, 75, 19, 71,   // Top 40
+      78, 77, 59, 57, 62, 46, 24, 43, 34, 11,  // Top 50
+      23, 51, 8, 21, 27, 76, 63, 80, 41, 32,   // Top 60
+      36, 2, 7, 69, 28, 35, 17, 22, 50, 1,     // Top 70
+      68, 30, 25, 20, 58, 67, 65, 48, 3, 47    // Top 80
     ],
   );
 
+  // Dados atualizados em: Junho/2026 (concurso 2965)
+  // Fonte: https://www.somatematica.com.br/duplasenaFrequentes.php
+  // Nota: frequência agrega 1º e 2º sorteios de cada concurso
   static const Lottery duplaSena = Lottery(
     type: LotteryType.duplaSena,
     name: 'Dupla Sena',
@@ -67,24 +72,32 @@ class LotteryData {
     maxNumber: 50,
     // Todos os 50 números ordenados por frequência
     mostFrequentNumbers: [
-      39, 14, 33, 42, 19, 4, 45, 11, 36, 13,   // Top 10
-      3, 29, 31, 6, 46, 10, 37, 25, 8, 47,     // Top 20
-      24, 2, 20, 34, 50, 16, 12, 49, 40, 28,   // Top 30
-      35, 41, 18, 44, 26, 15, 38, 23, 5, 9,    // Top 40
-      30, 27, 32, 17, 7, 43, 21, 48, 1, 22     // Top 50
+      36, 30, 39, 35, 18, 46, 31, 49, 11, 9,   // Top 10
+      33, 2, 5, 45, 42, 14, 10, 44, 6, 21,     // Top 20
+      25, 3, 8, 20, 19, 41, 22, 12, 32, 47,    // Top 30
+      34, 43, 4, 50, 23, 7, 38, 15, 13, 28,   // Top 40
+      17, 16, 37, 26, 40, 48, 29, 24, 1, 27    // Top 50
     ],
   );
 
+  // Dados atualizados em: Junho/2026 (concurso 2399)
+  // Fonte: https://www.somatematica.com.br/timemaniaFrequentes.php
   static const Lottery timemania = Lottery(
     type: LotteryType.timemania,
     name: 'Timemania',
     numbersToPick: 10,
     minNumber: 1,
     maxNumber: 80,
-    // Dados fornecidos pelo usuário
+    // Todos os 80 números ordenados por frequência
     mostFrequentNumbers: [
-      21, 70, 20, 61, 71, 66, 72, 69, 80, 12, // Top 10
-      4, 50, 28, 79, 6                        // Top 15
+      21, 20, 61, 70, 35, 66, 71, 72, 12, 4,   // Top 10
+      39, 65, 80, 44, 41, 48, 50, 6, 11, 79,   // Top 20
+      13, 28, 57, 55, 60, 69, 51, 63, 40, 26,  // Top 30
+      8, 3, 5, 49, 62, 67, 1, 34, 23, 15,      // Top 40
+      27, 14, 56, 31, 33, 45, 10, 73, 32, 52,  // Top 50
+      25, 36, 74, 47, 7, 64, 19, 30, 29, 16,   // Top 60
+      17, 77, 42, 78, 22, 2, 37, 75, 24, 68,  // Top 70
+      38, 43, 46, 18, 58, 59, 9, 76, 54, 53    // Top 80
     ],
   );
 
