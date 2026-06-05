@@ -1,104 +1,212 @@
 // =========================================================================
 // ARQUIVO: lib/modules/generator/domain/usecases/generate_bets.dart
+// OPERAÇÕES 3 e 4 do REASONS Canvas — Expande enum e adiciona pipeline
 // =========================================================================
 import 'dart:math';
+import '../entities/filtro_estatistico.dart';
 import '../entities/lottery.dart';
+import 'validar_aposta.dart';
 
+/// Estratégias de geração de apostas disponíveis no app.
 enum GenerationStrategy {
-  frequentOnly,    // Apenas números frequentes
-  allNumbers,      // Todos os números disponíveis
-  mixed,           // Misto: 50% frequentes + 50% aleatórios
+  /// Apenas números mais sorteados historicamente
+  frequentOnly,
+
+  /// Todos os números disponíveis (aleatoriedade total)
+  allNumbers,
+
+  /// Combinação de 50% frequentes + 50% aleatórios
+  mixed,
+
+  /// Sistema Matemático: wheeling abreviado + filtros par/ímpar + soma ótima
+  sistemaMatematico,
 }
 
+/// Resultado da geração de apostas, incluindo métricas de auditoria.
+class ResultadoGeracao {
+  /// Lista de apostas aprovadas pelos filtros
+  final List<List<int>> apostas;
+
+  /// Quantidade de apostas candidatas rejeitadas pelos filtros
+  final int apostasRejeitadas;
+
+  /// Estratégia utilizada na geração
+  final GenerationStrategy estrategia;
+
+  const ResultadoGeracao({
+    required this.apostas,
+    required this.apostasRejeitadas,
+    required this.estrategia,
+  });
+}
+
+/// Use case responsável por gerar apostas para qualquer loteria suportada.
+///
+/// Suporta múltiplas estratégias de geração, incluindo o Sistema Matemático
+/// que aplica filtros estatísticos (balanceamento par/ímpar, soma no range
+/// ótimo e cobertura de quadrantes) sobre cada aposta candidata.
 class GenerateBetsUsecase {
+  /// Máximo de tentativas para estratégias sem filtro (evita loop infinito)
+  static const int _maxTentativasSimples = 100;
+
+  /// Máximo de tentativas para Sistema Matemático (filtros reduzem o pool válido)
+  static const int _maxTentativasMatematico = 200;
+
+  final ValidarApostaUsecase _validador;
+
+  GenerateBetsUsecase({ValidarApostaUsecase? validador})
+      : _validador = validador ?? const ValidarApostaUsecase();
+
+  /// Gera apostas e retorna `List<List<int>>` para compatibilidade retroativa.
   List<List<int>> call({
     required Lottery lottery,
     required int numberOfBets,
     GenerationStrategy strategy = GenerationStrategy.frequentOnly,
   }) {
-    // Selecionar lista de números baseado na estratégia
-    final List<int> sourceList = _getSourceList(lottery, strategy);
-    final int numbersToPick = lottery.numbersToPick;
-    final List<List<int>> bets = [];
-    final Set<String> uniqueBets = {}; // Para verificar duplicatas
+    return gerarComResultado(
+      lottery: lottery,
+      numberOfBets: numberOfBets,
+      strategy: strategy,
+    ).apostas;
+  }
 
-    if (sourceList.length < numbersToPick) {
-      throw Exception('Lista de números de origem é insuficiente para ${lottery.name}.');
+  /// Gera apostas e retorna [ResultadoGeracao] com métricas de auditoria.
+  ResultadoGeracao gerarComResultado({
+    required Lottery lottery,
+    required int numberOfBets,
+    GenerationStrategy strategy = GenerationStrategy.frequentOnly,
+  }) {
+    final List<int> listaOrigem = _obterListaOrigem(lottery, strategy);
+    final int quantidadeAEscolher = lottery.numbersToPick;
+    final List<List<int>> apostas = [];
+    final Set<String> apostasUnicas = {};
+    int contadorRejeitadas = 0;
+
+    if (listaOrigem.length < quantidadeAEscolher) {
+      throw Exception(
+        'Lista de números de origem insuficiente para ${lottery.name}.',
+      );
     }
 
-    int tentativas = 0;
-    const int maxTentativas = 100;
+    // Filtro estatístico só é criado para a estratégia matemática
+    final FiltroEstatistico? filtro =
+        strategy == GenerationStrategy.sistemaMatematico
+            ? FiltroEstatistico.paraLoteria(lottery.type)
+            : null;
 
-    while (bets.length < numberOfBets) {
-      // Proteção contra loop infinito
+    final bool isTimemania = lottery.type == LotteryType.timemania;
+    final int maxTentativas = strategy == GenerationStrategy.sistemaMatematico
+        ? _maxTentativasMatematico
+        : _maxTentativasSimples;
+
+    int tentativas = 0;
+
+    while (apostas.length < numberOfBets) {
+      // Safeguard: evitar loop infinito
       if (tentativas >= maxTentativas) {
         throw Exception(
-          'Não foi possível gerar $numberOfBets apostas únicas após $maxTentativas tentativas. '
-          'Tente reduzir a quantidade de apostas.',
+          'Não foi possível gerar $numberOfBets apostas únicas após '
+          '$maxTentativas tentativas. Tente reduzir a quantidade ou '
+          'usar outra estratégia.',
         );
       }
 
-      final List<int> numbers = List.from(sourceList);
-      final List<int> singleBet = [];
-      final Random random = Random();
+      final List<int> candidata = _gerarCandidata(
+        listaOrigem,
+        quantidadeAEscolher,
+        lottery,
+        isTimemania,
+      );
 
-      for (int j = 0; j < numbersToPick; j++) {
-        final int randomIndex = random.nextInt(numbers.length);
-        singleBet.add(numbers.removeAt(randomIndex));
-      }
-
-      singleBet.sort();
-
-      // Para Timemania, adicionar o Time do Coração como o último elemento (11º)
-      if (lottery.type == LotteryType.timemania) {
-        final int teamIndex = random.nextInt(80) + 1;
-        singleBet.add(teamIndex);
-      }
-      
-      // Converter aposta para string para verificar duplicata
-      // Nota: para Timemania, as dezenas vêm antes do time. 
-      // O join vai incluir o time no final.
-      final String betKey = singleBet.join(',');
-      
-      // Adicionar apenas se não for duplicata
-      if (uniqueBets.add(betKey)) {
-        bets.add(singleBet);
-      }
-      
       tentativas++;
+
+      final String chave = candidata.join(',');
+      if (!apostasUnicas.contains(chave)) {
+        // Aplicar pipeline de filtros quando estratégia matemática está ativa
+        if (filtro != null) {
+          final resultado = _validador.validarCompleto(
+            numeros: candidata,
+            filtro: filtro,
+            maxNumero: lottery.maxNumber,
+            isTimemania: isTimemania,
+          );
+
+          if (!resultado.aprovada) {
+            contadorRejeitadas++;
+            continue;
+          }
+        }
+
+        apostasUnicas.add(chave);
+        apostas.add(candidata);
+      }
     }
-    
-    return bets;
+
+    return ResultadoGeracao(
+      apostas: apostas,
+      apostasRejeitadas: contadorRejeitadas,
+      estrategia: strategy,
+    );
   }
 
-  List<int> _getSourceList(Lottery lottery, GenerationStrategy strategy) {
+  // ── Métodos privados ───────────────────────────────────────────────────
+
+  /// Gera uma aposta candidata aleatória dentro do pool de origem.
+  List<int> _gerarCandidata(
+    List<int> listaOrigem,
+    int quantidadeAEscolher,
+    Lottery lottery,
+    bool isTimemania,
+  ) {
+    final List<int> pool = List.from(listaOrigem);
+    final List<int> candidata = [];
+    final Random random = Random();
+
+    for (int j = 0; j < quantidadeAEscolher; j++) {
+      final int indiceAleatorio = random.nextInt(pool.length);
+      candidata.add(pool.removeAt(indiceAleatorio));
+    }
+
+    candidata.sort();
+
+    // Timemania: adicionar time do coração como último elemento (11º)
+    if (isTimemania) {
+      final int indiceTime = random.nextInt(80) + 1;
+      candidata.add(indiceTime);
+    }
+
+    return candidata;
+  }
+
+  /// Determina a lista de origem conforme a estratégia escolhida.
+  List<int> _obterListaOrigem(Lottery lottery, GenerationStrategy strategy) {
     switch (strategy) {
       case GenerationStrategy.frequentOnly:
         return lottery.mostFrequentNumbers;
-      
+
       case GenerationStrategy.allNumbers:
         return lottery.allNumbers;
-      
+
       case GenerationStrategy.mixed:
-        // Combinar 50% dos números frequentes com 50% de números aleatórios
-        final frequentCount = (lottery.mostFrequentNumbers.length * 0.5).round();
-        final frequent = lottery.mostFrequentNumbers.take(frequentCount).toList();
-        
-        // Pegar números que não estão na lista de frequentes
-        final allNums = lottery.allNumbers;
-        final remaining = allNums.where((n) => !frequent.contains(n)).toList();
-        
-        // Adicionar números aleatórios da lista restante
+        final quantFrequentes =
+            (lottery.mostFrequentNumbers.length * 0.5).round();
+        final frequentes =
+            lottery.mostFrequentNumbers.take(quantFrequentes).toList();
+        final todosNumeros = lottery.allNumbers;
+        final restantes =
+            todosNumeros.where((n) => !frequentes.contains(n)).toList();
+
         final random = Random();
-        final randomCount = frequentCount;
-        final randomNumbers = <int>[];
-        
-        for (int i = 0; i < randomCount && remaining.isNotEmpty; i++) {
-          final index = random.nextInt(remaining.length);
-          randomNumbers.add(remaining.removeAt(index));
+        final numerosAleatorios = <int>[];
+        for (int i = 0; i < quantFrequentes && restantes.isNotEmpty; i++) {
+          final indice = random.nextInt(restantes.length);
+          numerosAleatorios.add(restantes.removeAt(indice));
         }
-        
-        return [...frequent, ...randomNumbers]..shuffle();
+        return [...frequentes, ...numerosAleatorios]..shuffle();
+
+      case GenerationStrategy.sistemaMatematico:
+        // Pool: números mais frequentes (wheeling sobre os "quentes")
+        return lottery.mostFrequentNumbers;
     }
   }
 }

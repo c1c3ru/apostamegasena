@@ -126,7 +126,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
             Text('1. Escolha a loteria', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<LotteryType>(
-              value: _selectedLottery,
+              initialValue: _selectedLottery,
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
@@ -147,7 +147,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
             Text('2. Estratégia de geração', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<GenerationStrategy>(
-              value: _selectedStrategy,
+              initialValue: _selectedStrategy,
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
@@ -164,6 +164,10 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 DropdownMenuItem(
                   value: GenerationStrategy.mixed,
                   child: Text('Misto (50% frequentes + 50% aleatórios)'),
+                ),
+                DropdownMenuItem(
+                  value: GenerationStrategy.sistemaMatematico,
+                  child: Text('🎯 Sistema Matemático (Wheeling + Filtros)'),
                 ),
               ],
               onChanged: (strategy) {
@@ -204,6 +208,9 @@ class _GeneratorPageState extends State<GeneratorPage> {
         return 'Usa todos os números disponíveis da loteria.';
       case GenerationStrategy.mixed:
         return 'Combina números frequentes com números aleatórios.';
+      case GenerationStrategy.sistemaMatematico:
+        return '🎯 Wheeling + Filtros: garante balanceamento par/ímpar e '
+            'soma no range ótimo histórico. Maximiza acertos de quadra/quina.';
     }
   }
 

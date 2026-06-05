@@ -18,8 +18,8 @@ class StatisticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = BetStatistics.analyze(
-      bets, 
-      lottery.maxNumber, 
+      bets,
+      lottery.maxNumber,
       isTimemania: lottery.type == LotteryType.timemania,
     );
 
@@ -45,17 +45,33 @@ class StatisticsPage extends StatelessWidget {
                 children: [
                   _buildSummaryCard(context, stats),
                   const SizedBox(height: 16),
-                  _buildDistributionCard(context, stats, 'Par / Ímpar', 
-                    stats.evenCount, stats.oddCount, 
-                    stats.evenPercentage, stats.oddPercentage,
-                    'Pares', 'Ímpares', Colors.blue, Colors.orange),
+                  _buildDistributionCard(
+                    context,
+                    stats,
+                    'Par / Ímpar',
+                    stats.evenCount,
+                    stats.oddCount,
+                    stats.evenPercentage,
+                    stats.oddPercentage,
+                    'Pares',
+                    'Ímpares',
+                    Colors.blue,
+                    Colors.orange,
+                  ),
                   const SizedBox(height: 16),
-                  _buildDistributionCard(context, stats, 'Alto / Baixo',
-                    stats.highCount, stats.lowCount,
-                    stats.highPercentage, stats.lowPercentage,
-                    'Altos (>${(lottery.maxNumber / 2).ceil()})', 
+                  _buildDistributionCard(
+                    context,
+                    stats,
+                    'Alto / Baixo',
+                    stats.highCount,
+                    stats.lowCount,
+                    stats.highPercentage,
+                    stats.lowPercentage,
+                    'Altos (>${(lottery.maxNumber / 2).ceil()})',
                     'Baixos (≤${(lottery.maxNumber / 2).ceil()})',
-                    Colors.green, Colors.purple),
+                    Colors.green,
+                    Colors.purple,
+                  ),
                   const SizedBox(height: 16),
                   _buildFrequencyCard(context, stats),
                 ],
@@ -75,8 +91,8 @@ class StatisticsPage extends StatelessWidget {
             Text(
               'Resumo Geral',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -101,13 +117,10 @@ class StatisticsPage extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }
@@ -135,8 +148,8 @@ class StatisticsPage extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -227,16 +240,16 @@ class StatisticsPage extends StatelessWidget {
             Text(
               'Frequência de Números',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             Text(
               'Mais Frequentes',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -257,9 +270,9 @@ class StatisticsPage extends StatelessWidget {
             Text(
               'Menos Frequentes',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
             ),
             const SizedBox(height: 8),
             Wrap(
