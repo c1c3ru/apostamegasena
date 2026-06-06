@@ -115,12 +115,14 @@ void main() {
         mostFrequentNumbers: [10, 53, 5],
       );
 
-      // Assert
+      // Assert — props contém: type, name, numbersToPick, mostFrequentNumbers, minNumber, maxNumber
       expect(lottery.props, [
         LotteryType.megaSena,
         'Mega-Sena',
         6,
         [10, 53, 5],
+        1,   // minNumber padrão
+        60,  // maxNumber padrão
       ]);
     });
   });
@@ -128,11 +130,12 @@ void main() {
   group('LotteryType', () {
     test('deve ter todos os tipos de loteria', () {
       // Assert
-      expect(LotteryType.values.length, 4);
+      expect(LotteryType.values.length, 5); // megaSena, lotofacil, quina, duplaSena, timemania
       expect(LotteryType.values.contains(LotteryType.megaSena), true);
       expect(LotteryType.values.contains(LotteryType.lotofacil), true);
       expect(LotteryType.values.contains(LotteryType.quina), true);
       expect(LotteryType.values.contains(LotteryType.duplaSena), true);
+      expect(LotteryType.values.contains(LotteryType.timemania), true);
     });
   });
 }

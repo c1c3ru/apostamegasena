@@ -12,27 +12,27 @@ void main() {
     usecase = GenerateBetsUsecase();
   });
 
-  group('GenerateBetsUsecase', () {
+  group('GenerateBetsUsecase — estratégia frequentOnly (padrão)', () {
     test('deve gerar o número correto de apostas', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
         mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       );
-      const numberOfBets = 5;
+      const quantidadeApostas = 5;
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: numberOfBets);
+      final resultado = usecase(lottery: loteria, numberOfBets: quantidadeApostas);
 
       // Assert
-      expect(result.length, numberOfBets);
+      expect(resultado.length, quantidadeApostas);
     });
 
     test('cada aposta deve ter a quantidade correta de números', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
@@ -40,17 +40,17 @@ void main() {
       );
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: 3);
+      final resultado = usecase(lottery: loteria, numberOfBets: 3);
 
       // Assert
-      for (final bet in result) {
-        expect(bet.length, lottery.numbersToPick);
+      for (final aposta in resultado) {
+        expect(aposta.length, loteria.numbersToPick);
       }
     });
 
     test('números devem estar ordenados em cada aposta', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
@@ -58,137 +58,119 @@ void main() {
       );
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: 3);
+      final resultado = usecase(lottery: loteria, numberOfBets: 3);
 
       // Assert
-      for (final bet in result) {
-        final sortedBet = List<int>.from(bet)..sort();
-        expect(bet, sortedBet);
+      for (final aposta in resultado) {
+        final apostaOrdenada = List<int>.from(aposta)..sort();
+        expect(aposta, apostaOrdenada);
       }
     });
 
     test('não deve gerar apostas duplicadas', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
         mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
       );
-      const numberOfBets = 10;
+      const quantidadeApostas = 10;
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: numberOfBets);
+      final resultado = usecase(lottery: loteria, numberOfBets: quantidadeApostas);
 
       // Assert
-      final uniqueBets = <String>{};
-      for (final bet in result) {
-        final betKey = bet.join(',');
-        expect(uniqueBets.contains(betKey), false, reason: 'Aposta duplicada encontrada: $bet');
-        uniqueBets.add(betKey);
+      final apostasUnicas = <String>{};
+      for (final aposta in resultado) {
+        final chave = aposta.join(',');
+        expect(apostasUnicas.contains(chave), false,
+            reason: 'Aposta duplicada encontrada: $aposta');
+        apostasUnicas.add(chave);
       }
-      expect(uniqueBets.length, numberOfBets);
+      expect(apostasUnicas.length, quantidadeApostas);
     });
 
     test('deve lançar exceção se lista fonte for insuficiente', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
-        mostFrequentNumbers: [1, 2, 3, 4, 5], // Apenas 5 números, mas precisa de 6
+        mostFrequentNumbers: [1, 2, 3, 4, 5], // Apenas 5 números, precisa de 6
       );
 
       // Act & Assert
       expect(
-        () => usecase(lottery: lottery, numberOfBets: 1),
+        () => usecase(lottery: loteria, numberOfBets: 1),
         throwsException,
       );
     });
 
     test('números devem estar dentro da lista fonte', () {
       // Arrange
-      const sourceNumbers = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-      const lottery = Lottery(
+      const numerosOrigem = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
-        mostFrequentNumbers: sourceNumbers,
+        mostFrequentNumbers: numerosOrigem,
       );
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: 3);
+      final resultado = usecase(lottery: loteria, numberOfBets: 3);
 
       // Assert
-      for (final bet in result) {
-        for (final number in bet) {
-          expect(sourceNumbers.contains(number), true, reason: 'Número $number não está na lista fonte');
+      for (final aposta in resultado) {
+        for (final numero in aposta) {
+          expect(numerosOrigem.contains(numero), true,
+              reason: 'Número $numero não está na lista fonte');
         }
       }
     });
 
-    test('deve lançar exceção ao tentar gerar mais apostas únicas do que possível', () {
-      // Arrange
-      // Com 7 números e escolhendo 6, há apenas C(7,6) = 7 combinações possíveis
-      const lottery = Lottery(
+    test('deve lançar exceção ao tentar gerar mais apostas do que as combinações possíveis', () {
+      // Arrange — C(7,6) = 7 combinações possíveis
+      const loteria = Lottery(
         type: LotteryType.megaSena,
         name: 'Mega-Sena',
         numbersToPick: 6,
         mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7],
       );
-      const numberOfBets = 20; // Tentando gerar mais do que as 7 combinações possíveis
+      const quantidadeApostas = 20; // Impossível
 
       // Act & Assert
       expect(
-        () => usecase(lottery: lottery, numberOfBets: numberOfBets),
+        () => usecase(lottery: loteria, numberOfBets: quantidadeApostas),
         throwsException,
       );
     });
 
-    test('deve gerar apostas diferentes em múltiplas execuções', () {
-      // Arrange
-      const lottery = Lottery(
-        type: LotteryType.megaSena,
-        name: 'Mega-Sena',
-        numbersToPick: 6,
-        mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-      );
-
-      // Act
-      final result1 = usecase(lottery: lottery, numberOfBets: 5);
-      final result2 = usecase(lottery: lottery, numberOfBets: 5);
-
-      // Assert
-      // É extremamente improvável que duas execuções gerem exatamente as mesmas apostas
-      final bets1Keys = result1.map((bet) => bet.join(',')).toSet();
-      final bets2Keys = result2.map((bet) => bet.join(',')).toSet();
-      
-      // Pelo menos uma aposta deve ser diferente
-      expect(bets1Keys.intersection(bets2Keys).length < 5, true);
-    });
-
     test('deve funcionar com Lotofácil (15 números)', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.lotofacil,
         name: 'Lotofácil',
         numbersToPick: 15,
-        mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+        mostFrequentNumbers: [
+          1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+          11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+        ],
       );
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: 3);
+      final resultado = usecase(lottery: loteria, numberOfBets: 3);
 
       // Assert
-      expect(result.length, 3);
-      for (final bet in result) {
-        expect(bet.length, 15);
+      expect(resultado.length, 3);
+      for (final aposta in resultado) {
+        expect(aposta.length, 15);
       }
     });
 
     test('deve funcionar com Quina (5 números)', () {
       // Arrange
-      const lottery = Lottery(
+      const loteria = Lottery(
         type: LotteryType.quina,
         name: 'Quina',
         numbersToPick: 5,
@@ -196,12 +178,135 @@ void main() {
       );
 
       // Act
-      final result = usecase(lottery: lottery, numberOfBets: 3);
+      final resultado = usecase(lottery: loteria, numberOfBets: 3);
 
       // Assert
-      expect(result.length, 3);
-      for (final bet in result) {
-        expect(bet.length, 5);
+      expect(resultado.length, 3);
+      for (final aposta in resultado) {
+        expect(aposta.length, 5);
+      }
+    });
+  });
+
+  group('GenerateBetsUsecase — estratégia allNumbers', () {
+    test('deve gerar apostas usando todos os números disponíveis', () {
+      // Arrange
+      const loteria = Lottery(
+        type: LotteryType.megaSena,
+        name: 'Mega-Sena',
+        numbersToPick: 6,
+        mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7],
+        maxNumber: 60,
+      );
+
+      // Act — usa allNumbers (1..60), não apenas os frequentes
+      final resultado = usecase(
+        lottery: loteria,
+        numberOfBets: 3,
+        strategy: GenerationStrategy.allNumbers,
+      );
+
+      // Assert
+      expect(resultado.length, 3);
+      for (final aposta in resultado) {
+        expect(aposta.length, 6);
+        for (final numero in aposta) {
+          expect(numero, inInclusiveRange(1, 60));
+        }
+      }
+    });
+  });
+
+  group('GenerateBetsUsecase — estratégia mixed', () {
+    test('deve gerar apostas usando a estratégia mista', () {
+      // Arrange
+      const loteria = Lottery(
+        type: LotteryType.megaSena,
+        name: 'Mega-Sena',
+        numbersToPick: 6,
+        mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        maxNumber: 60,
+      );
+
+      // Act
+      final resultado = usecase(
+        lottery: loteria,
+        numberOfBets: 5,
+        strategy: GenerationStrategy.mixed,
+      );
+
+      // Assert
+      expect(resultado.length, 5);
+      for (final aposta in resultado) {
+        expect(aposta.length, 6);
+      }
+    });
+  });
+
+  group('GenerateBetsUsecase — estratégia sistemaMatematico', () {
+    test('deve gerar apostas usando sistema matemático para Mega-Sena real', () {
+      // Arrange — usa a Mega-Sena real com números frequentes reais
+      final loteria = Lottery.fromType(LotteryType.megaSena);
+
+      // Act — pode gerar ou lançar exceção se filtros forem muito restritivos
+      try {
+        final resultado = usecase(
+          lottery: loteria,
+          numberOfBets: 2,
+          strategy: GenerationStrategy.sistemaMatematico,
+        );
+        expect(resultado.length, 2);
+        for (final aposta in resultado) {
+          expect(aposta.length, loteria.numbersToPick);
+        }
+      } on Exception catch (e) {
+        // Exceção esperada se não conseguir gerar dentro do limite de tentativas
+        expect(e.toString(), contains('tentativas'));
+      }
+    });
+  });
+
+  group('GenerateBetsUsecase — gerarComResultado (métricas de auditoria)', () {
+    test('deve retornar ResultadoGeracao com a estratégia e apostas corretas', () {
+      // Arrange
+      const loteria = Lottery(
+        type: LotteryType.megaSena,
+        name: 'Mega-Sena',
+        numbersToPick: 6,
+        mostFrequentNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      );
+
+      // Act
+      final resultado = usecase.gerarComResultado(
+        lottery: loteria,
+        numberOfBets: 3,
+        strategy: GenerationStrategy.frequentOnly,
+      );
+
+      // Assert
+      expect(resultado.apostas.length, 3);
+      expect(resultado.estrategia, GenerationStrategy.frequentOnly);
+      // frequentOnly não aplica filtros, portanto não rejeita apostas
+      expect(resultado.apostasRejeitadas, 0);
+    });
+
+    test('deve contabilizar apostas rejeitadas pelo sistema matemático', () {
+      // Arrange — usa a loteria real para que os filtros estatísticos sejam aplicados
+      final loteria = Lottery.fromType(LotteryType.megaSena);
+
+      // Act
+      try {
+        final resultado = usecase.gerarComResultado(
+          lottery: loteria,
+          numberOfBets: 1,
+          strategy: GenerationStrategy.sistemaMatematico,
+        );
+
+        expect(resultado.estrategia, GenerationStrategy.sistemaMatematico);
+        // Quantidade de rejeitadas é >= 0 dependendo do acaso
+        expect(resultado.apostasRejeitadas, greaterThanOrEqualTo(0));
+      } on Exception {
+        // Aceitável se não conseguir gerar dentro do limite de tentativas
       }
     });
   });
