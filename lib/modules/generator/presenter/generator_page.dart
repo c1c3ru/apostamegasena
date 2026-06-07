@@ -140,6 +140,8 @@ class _GeneratorPageState extends State<GeneratorPage> {
               onChanged: (type) {
                 if (type != null) {
                   setState(() => _selectedLottery = type);
+                  // Dispara evento no BLoC para limpar apostas da loteria anterior
+                  _bloc.add(LotteryTypeChanged(lotteryType: type));
                 }
               },
             ),
@@ -148,6 +150,8 @@ class _GeneratorPageState extends State<GeneratorPage> {
             const SizedBox(height: 8),
             DropdownButtonFormField<GenerationStrategy>(
               initialValue: _selectedStrategy,
+              // isExpanded permite que o texto ocupe toda a largura sem estourar
+              isExpanded: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
@@ -155,19 +159,31 @@ class _GeneratorPageState extends State<GeneratorPage> {
               items: const [
                 DropdownMenuItem(
                   value: GenerationStrategy.frequentOnly,
-                  child: Text('Apenas números frequentes'),
+                  child: Text(
+                    'Apenas números frequentes',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 DropdownMenuItem(
                   value: GenerationStrategy.allNumbers,
-                  child: Text('Todos os números'),
+                  child: Text(
+                    'Todos os números',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 DropdownMenuItem(
                   value: GenerationStrategy.mixed,
-                  child: Text('Misto (50% frequentes + 50% aleatórios)'),
+                  child: Text(
+                    'Misto (50% frequentes + 50% aleatórios)',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 DropdownMenuItem(
                   value: GenerationStrategy.sistemaMatematico,
-                  child: Text('🎯 Sistema Matemático (Wheeling + Filtros)'),
+                  child: Text(
+                    '🎯 Sistema Matemático (Wheeling + Filtros)',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
               onChanged: (strategy) {

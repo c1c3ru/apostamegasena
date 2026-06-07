@@ -17,6 +17,15 @@ class GeneratorBloc extends Bloc<GeneratorEvent, GeneratorState> {
 
   GeneratorBloc(this._generateBetsUsecase, this._historyRepository) : super(GeneratorInitial()) {
     on<BetsGenerated>(_onBetsGenerated);
+    on<LotteryTypeChanged>(_onLotteryTypeChanged);
+  }
+
+  // Reseta o estado ao trocar de loteria para evitar exibir apostas da loteria anterior
+  void _onLotteryTypeChanged(
+    LotteryTypeChanged event,
+    Emitter<GeneratorState> emit,
+  ) {
+    emit(GeneratorInitial());
   }
 
   Future<void> _onBetsGenerated(
