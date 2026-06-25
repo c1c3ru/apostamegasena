@@ -31,6 +31,7 @@ Compartilhamento
 concursos
 configuração
 Configuração
+conservador
 Contribuições
 Contribuindo
 copiada
@@ -58,6 +59,7 @@ educacionais
 entidades
 entrada
 entretenimento
+errado
 especiais
 estados
 estática
@@ -89,6 +91,7 @@ intuitiva
 Jogue
 licença
 Licença
+limiar
 listas
 loterias
 Loterias
@@ -121,6 +124,7 @@ projeto
 publicação
 pubspec
 raiz
+realista
 reativo
 recentes
 refletir
@@ -139,6 +143,7 @@ Seleciona
 separação
 Separação
 Sinta
+suficiente
 Suportadas
 Suporte
 tamanhos
