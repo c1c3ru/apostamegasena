@@ -1,4 +1,4 @@
-package com.example.apostamegasena
+package com.c1c3ru.apostamegasena
 
 import io.flutter.embedding.android.FlutterActivity
 
