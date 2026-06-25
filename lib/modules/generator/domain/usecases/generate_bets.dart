@@ -108,7 +108,7 @@ class GenerateBetsUsecase {
   static const int _maxTentativasMatematico = 200;
 
   /// Máximo de tentativas para estratégias de entropia
-  static const int _maxTentativasEntropia = 300;
+  static const int _maxTentativasEntropia = 1000;
 
   final ValidarApostaUsecase _validador;
 
@@ -214,8 +214,28 @@ class GenerateBetsUsecase {
 
       tentativas++;
 
+      // Sentinela: candidata inválida (tamanho errado) → rejeitar
+      if (candidata.length != quantidadeAEscolher &&
+          !(isTimemania && candidata.length == quantidadeAEscolher + 1)) {
+        contadorRejeitadas++;
+        continue;
+      }
+
       final String chave = candidata.join(',');
       if (!apostasUnicas.contains(chave)) {
+        // Para entropyMixed: verificar se a aposta tem entropia suficiente
+        if (strategy == GenerationStrategy.entropyMixed &&
+            pesosEntropia != null) {
+          final double entropiaAposta =
+              _entropiaAposta(candidata, pesosEntropia, listaOrigem);
+          final double entropiaMaxima = log(listaOrigem.length) / log(2);
+          // Rejeitar se entropia < 40% do máximo (limiar conservador e realista)
+          if (entropiaAposta < entropiaMaxima * 0.40) {
+            contadorRejeitadas++;
+            continue;
+          }
+        }
+
         // Aplicar pipeline de filtros quando estratégia matemática está ativa
         if (filtro != null) {
           final resultado = _validador.validarCompleto(
@@ -318,19 +338,6 @@ class GenerateBetsUsecase {
     }
 
     candidata.sort();
-
-    // Para entropyMixed: verificar se a entropia da aposta atinge o mínimo
-    if (strategy == GenerationStrategy.entropyMixed) {
-      final double entropiaAposta =
-          _entropiaAposta(candidata, pesos, listaOrigem);
-      final double entropiaMaxima = log(listaOrigem.length) / log(2);
-      // Rejeitar se a entropia da aposta for < 70% do máximo possível
-      if (entropiaAposta < entropiaMaxima * 0.70) {
-        // Retorna candidata inválida propositalmente para incrementar tentativas
-        // (o loop externo em gerarComResultado trata via chave duplicada falsa)
-        return [-1]; // sentinela de rejeição por entropia insuficiente
-      }
-    }
 
     // Timemania: adicionar time do coração como último elemento (11º)
     if (isTimemania) {
