@@ -7,7 +7,7 @@ description: Gerador inteligente de apostas para Mega-Sena, Lotofácil, Quina e 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -47,6 +47,6 @@ flutter:
 # Adicione esta seção no final do arquivo pubspec.yaml
 flutter_launcher_icons:
   android: "launcher_icon" # Nome do ícone para Android
-  ios: true                # Gerar ícones para iOS
+  ios: true # Gerar ícones para iOS
   image_path: "assets/icon.png" # Caminho para a sua imagem
-  min_sdk_android: 21      # Opcional: versão mínima do Android
+  min_sdk_android: 21 # Opcional: versão mínima do Android

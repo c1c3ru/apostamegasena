@@ -1,0 +1,53 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions:
+  - name: custom-dictionary
+    path: ./.cspell/custom-dictionary.txt
+    addWords: true
+dictionaries:
+  - custom-dictionary
+words:
+  - acertos
+  - botão
+  - Combina
+  - Comparar
+  - compartilhar
+  - Compartilhar
+  - Dispara
+  - distribuída
+  - Erro
+  - Escolha
+  - escuro
+  - estado
+  - estatísticas
+  - estourar
+  - evento
+  - exibir
+  - Formatados
+  - garante
+  - Geradas
+  - Gerado
+  - Gerador
+  - grau
+  - honesto
+  - largura
+  - limpar
+  - Maximiza
+  - Minhas
+  - Mista
+  - ocupe
+  - pelo
+  - permite
+  - pondera
+  - Ponderados
+  - pressione
+  - quadra
+  - Quantas
+  - Reseta
+  - Salvar
+  - seus
+  - texto
+  - toda
+  - todas
+ignoreWords: []
+import: []

@@ -33,6 +33,172 @@ class _GeneratorPageState extends State<GeneratorPage> {
     super.dispose();
   }
 
+  Widget _buildDisclaimerBanner(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFB71C1C), Color(0xFFE53935)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x55B71C1C),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 28),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '⚠️ AVISO IMPORTANTE',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Este aplicativo NÃO garante ganhos. '
+                    'Jogue com responsabilidade. '
+                    'A probabilidade de acertar a Mega-Sena é de 1 em 50 milhões — '
+                    'nenhuma estratégia altera esse número.',
+                    style: TextStyle(
+                      color: Colors.red.shade50,
+                      fontSize: 12,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _copiarPix(BuildContext context) {
+    Clipboard.setData(const ClipboardData(text: 'ed6bc858-5f8b-466d-b212-d0f59b583238'));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white, size: 18),
+            SizedBox(width: 8),
+            Text('Chave Pix copiada! 💚'),
+          ],
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Widget _buildPixCard(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1B5E20), Color(0xFF43A047)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x441B5E20),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _copiarPix(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text('💚', style: TextStyle(fontSize: 22)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Ganhou? Me presenteie com qualquer valor! 🎉',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12.5,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'ed6bc858-5f8b-466d-b212-d0f59b583238',
+                        style: TextStyle(
+                          color: Colors.green.shade100,
+                          fontSize: 11,
+                          fontFamily: 'monospace',
+                          letterSpacing: 0.5,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '👆 Toque para copiar',
+                        style: TextStyle(
+                          color: Colors.green.shade200,
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  children: [
+                    Icon(Icons.copy, color: Colors.green.shade100, size: 18),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Copiar',
+                      style: TextStyle(color: Colors.green.shade100, fontSize: 10),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _compartilharApostas(List<List<int>> bets, String lotteryName) {
     final buffer = StringBuffer();
     buffer.writeln('🍀 Minhas Apostas - $lotteryName');
@@ -85,6 +251,10 @@ class _GeneratorPageState extends State<GeneratorPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            _buildDisclaimerBanner(context),
+            const SizedBox(height: 12),
+            _buildPixCard(context),
+            const SizedBox(height: 16),
             _buildOptionsCard(context),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -185,6 +355,20 @@ class _GeneratorPageState extends State<GeneratorPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                DropdownMenuItem(
+                  value: GenerationStrategy.entropyFrequent,
+                  child: Text(
+                    '🔢 Entropia Shannon — Frequentes Ponderados',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: GenerationStrategy.entropyMixed,
+                  child: Text(
+                    '🌀 Entropia Shannon — Misto Caótico',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
               onChanged: (strategy) {
                 if (strategy != null) {
@@ -221,12 +405,20 @@ class _GeneratorPageState extends State<GeneratorPage> {
       case GenerationStrategy.frequentOnly:
         return 'Usa apenas os números mais sorteados historicamente.';
       case GenerationStrategy.allNumbers:
-        return 'Usa todos os números disponíveis da loteria.';
+        return 'Usa todos os números disponíveis da loteria (mais honesto matematicamente).';
       case GenerationStrategy.mixed:
-        return 'Combina números frequentes com números aleatórios.';
+        return 'Combina 50% de frequentes com 50% de números aleatórios.';
       case GenerationStrategy.sistemaMatematico:
         return '🎯 Wheeling + Filtros: garante balanceamento par/ímpar e '
             'soma no range ótimo histórico. Maximiza acertos de quadra/quina.';
+      case GenerationStrategy.entropyFrequent:
+        return '🔢 Entropia de Shannon: pondera cada dezena pelo grau de '
+            '"caos" histórico de seus aparecimentos (H = -ΣP·log₂P). '
+            'Dezenas com frequência bem distribuída no tempo recebem peso maior.';
+      case GenerationStrategy.entropyMixed:
+        return '🌀 Entropia Mista: usa pesos de entropia sobre todo o universo '
+            'e rejeita apostas cuja entropia total seja < 70% do máximo possível, '
+            'garantindo combinações matematicamente imprevisíveis.';
     }
   }
 
@@ -315,6 +507,34 @@ class _GeneratorPageState extends State<GeneratorPage> {
                   );
                 },
               ),
+              if (state.avisoMatematico != null) ...[  
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    border: Border.all(color: Colors.amber.shade700),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.amber.shade800, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          state.avisoMatematico!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.amber.shade900,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           );
         }

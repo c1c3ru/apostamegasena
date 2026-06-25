@@ -35,25 +35,29 @@ class GeneratorBloc extends Bloc<GeneratorEvent, GeneratorState> {
     emit(GeneratorLoading());
     try {
       final lottery = Lottery.fromType(event.lotteryType);
-      final bets = _generateBetsUsecase(
+      final resultado = _generateBetsUsecase.gerarComResultado(
         lottery: lottery,
         numberOfBets: event.numberOfBets,
         strategy: event.strategy,
       );
-      
+
       // Salvar no histórico
       final history = BetHistory(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         lotteryType: event.lotteryType,
         lotteryName: lottery.name,
-        bets: bets,
+        bets: resultado.apostas,
         timestamp: DateTime.now(),
         strategy: event.strategy.name,
       );
-      
+
       await _historyRepository.saveBetHistory(history);
-      
-      emit(GeneratorSuccess(bets: bets, lotteryName: lottery.name));
+
+      emit(GeneratorSuccess(
+        bets: resultado.apostas,
+        lotteryName: lottery.name,
+        avisoMatematico: resultado.avisoMatematico,
+      ));
     } catch (e) {
       emit(GeneratorFailure(message: 'Erro ao gerar apostas: ${e.toString()}'));
     }

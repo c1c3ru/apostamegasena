@@ -17,8 +17,13 @@ class GeneratorLoading extends GeneratorState {}
 class GeneratorSuccess extends GeneratorState {
   final List<List<int>> bets;
   final String lotteryName;
+  final String? avisoMatematico;
 
-  const GeneratorSuccess({required this.bets, required this.lotteryName});
+  const GeneratorSuccess({
+    required this.bets,
+    required this.lotteryName,
+    this.avisoMatematico,
+  });
 
   @override
   List<Object> get props => [bets, lotteryName];
