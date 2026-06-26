@@ -139,7 +139,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text('💚', style: TextStyle(fontSize: 22)),
