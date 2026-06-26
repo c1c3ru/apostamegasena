@@ -62,13 +62,15 @@ class FiltroEstatistico extends Equatable {
 
       case LotteryType.quina:
         // 5 números de 80 — soma ótima histórica: 100 a 260
-        // Par ótimo: 2 a 3 pares
+        // Par ótimo: 1 a 4 pares (5 números → 0 ou 5 pares são raros, mas 1-4 cobre >95%)
+        // Quadrantes: mínimo 2 (com apenas 5 dezenas e 4 quadrantes de 20 números,
+        // exigir 3+ quadrantes eliminava ~60% das apostas válidas — muito restritivo)
         return const FiltroEstatistico(
-          parMinimo: 2,
-          parMaximo: 3,
+          parMinimo: 1,
+          parMaximo: 4,
           somaMinima: 100,
           somaMaxima: 260,
-          minimoQuadrantesDistintos: 3,
+          minimoQuadrantesDistintos: 2,
         );
 
       case LotteryType.duplaSena:

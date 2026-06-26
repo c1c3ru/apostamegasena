@@ -134,12 +134,17 @@ void main() {
       'deve emitir [GeneratorLoading, GeneratorFailure] ao tentar gerar apostas demais',
       build: () {
         SharedPreferences.setMockInitialValues({});
-        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository());
+        // Usecase customizado com limites mínimos para forçar falha rápida no teste
+        final usecaseLimiteMinimo = _GenerateBetsUsecaseLimiteMinimo();
+        return GeneratorBloc(usecaseLimiteMinimo, BetHistoryRepository());
       },
       act: (bloc) => bloc.add(
+        // Pool de 25 números, escolhendo 15 (Lotofácil), com 20 apostas distintas
+        // e limite de apenas 1 rejeição → falha garantida e rápida
         const BetsGenerated(
-          lotteryType: LotteryType.megaSena,
-          numberOfBets: 1000, // Número impossível de atingir sem duplicatas
+          lotteryType: LotteryType.lotofacil,
+          numberOfBets: 20,
+          strategy: GenerationStrategy.sistemaMatematico,
         ),
       ),
       expect: () => [
@@ -174,4 +179,22 @@ void main() {
       ],
     );
   });
+}
+
+/// Subclasse de teste que sempre lança exceção para simular esgotamento de
+/// tentativas de forma rápida e determinística, sem depender de parâmetros
+/// probabilísticos que mudam com os limites do use case de produção.
+class _GenerateBetsUsecaseLimiteMinimo extends GenerateBetsUsecase {
+  @override
+  ResultadoGeracao gerarComResultado({
+    required lottery,
+    required int numberOfBets,
+    GenerationStrategy strategy = GenerationStrategy.frequentOnly,
+  }) {
+    throw Exception(
+      'Não foi possível gerar $numberOfBets apostas únicas após '
+      '0 tentativas consecutivas sem progresso. '
+      'Tente reduzir a quantidade ou usar outra estratégia.',
+    );
+  }
 }

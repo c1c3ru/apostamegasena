@@ -30,11 +30,14 @@ void main() {
     test('deve criar filtro correto para Quina', () {
       final filtro = FiltroEstatistico.paraLoteria(LotteryType.quina);
 
-      expect(filtro.parMinimo, 2);
-      expect(filtro.parMaximo, 3);
+      // Quina: 5 números de 80 — filtros ajustados para não eliminar ~60% das apostas
+      // par: 1 a 4 (cobre >95% dos sorteios reais)
+      // quadrantes: mínimo 2 (matematicamente correto para N=5 em 4 quadrantes)
+      expect(filtro.parMinimo, 1);
+      expect(filtro.parMaximo, 4);
       expect(filtro.somaMinima, 100);
       expect(filtro.somaMaxima, 260);
-      expect(filtro.minimoQuadrantesDistintos, 3);
+      expect(filtro.minimoQuadrantesDistintos, 2);
     });
 
     test('deve criar filtro correto para Dupla Sena', () {
