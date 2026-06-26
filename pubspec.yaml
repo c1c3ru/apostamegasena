@@ -29,8 +29,8 @@ dependencies:
   # Persistência local
   shared_preferences: ^2.2.2
 
-  # Compartilhamento
-  share_plus: ^7.2.1
+  # Compartilhamento — v9.x é estável no Android 12+ e Flutter 3.x
+  share_plus: ^9.0.0
 
   # Formatação de datas
   intl: ^0.18.1
