@@ -287,5 +287,6 @@
         "validar",
         "válido",
         "verificar"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
