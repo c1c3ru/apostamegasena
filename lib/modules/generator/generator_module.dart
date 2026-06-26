@@ -26,14 +26,16 @@ class GeneratorModule extends Module {
     r.child('/', child: (context) => const GeneratorPage());
     r.child('/history', child: (context) => HistoryPage(repository: Modular.get<BetHistoryRepository>()));
     r.child('/statistics', child: (context) {
-      final args = r.args.data as Map<String, dynamic>;
+      // Argumentos acessados dentro do callback para evitar crash na inicialização
+      final args = Modular.args.data as Map<String, dynamic>;
       return StatisticsPage(
         bets: args['bets'] as List<List<int>>,
         lottery: args['lottery'],
       );
     });
     r.child('/comparison', child: (context) {
-      final args = r.args.data as Map<String, dynamic>;
+      // Argumentos acessados dentro do callback para evitar crash na inicialização
+      final args = Modular.args.data as Map<String, dynamic>;
       return ComparisonPage(
         bets: args['bets'] as List<List<int>>,
         lottery: args['lottery'],
