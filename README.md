@@ -1,11 +1,11 @@
 # 🍀 Gerador de Apostas - Loterias Brasileiras
 
-Aplicação Flutter para geração inteligente de apostas para as principais loterias brasileiras: **Mega-Sena**, **Lotofácil**, **Quina** e **Dupla Sena**.
+Aplicação Flutter para geração inteligente de apostas para as principais loterias brasileiras: **Mega-Sena**, **Lotofácil**, **Quina**, **Dupla Sena** e **Timemania**.
 
 ## 📱 Funcionalidades
 
 - ✅ Geração de apostas baseada em números mais frequentes
-- ✅ Suporte para 4 modalidades de loteria
+- ✅ Suporte para 5 modalidades de loteria
 - ✅ Verificação automática de apostas duplicadas
 - ✅ Interface intuitiva e responsiva
 - ✅ Geração de 1 a 20 apostas por vez
@@ -19,6 +19,7 @@ Aplicação Flutter para geração inteligente de apostas para as principais lot
 | **Lotofácil** | 15 | 1 a 25 |
 | **Quina** | 5 | 1 a 80 |
 | **Dupla Sena** | 6 | 1 a 50 |
+| **Timemania** | 10 (+1 Time) | 1 a 80 |
 
 ## 🏗️ Arquitetura
 
@@ -45,23 +46,28 @@ lib/
 
 ## 🧮 Algoritmo de Geração
 
-O algoritmo utiliza uma abordagem baseada em **números mais frequentes** dos sorteios históricos:
+O algoritmo suporta múltiplas **estratégias de geração** para adequar ao estilo do jogador:
 
-1. **Seleção da Fonte**: Utiliza lista de números mais sorteados de cada loteria
-2. **Geração Aleatória**: Seleciona números aleatoriamente da lista fonte
-3. **Verificação de Duplicatas**: Garante que não há apostas repetidas usando Set
-4. **Ordenação**: Ordena os números de cada aposta automaticamente
-5. **Retry Automático**: Tenta novamente se aposta duplicada for gerada (máx. 100 tentativas)
+1. **Frequência Histórica**: Utiliza listas dos números mais sorteados de cada loteria.
+2. **Entropia de Shannon**: Pondera os números pela distribuição de seus aparecimentos históricos (caos vs previsibilidade), priorizando o "caos bem espalhado".
+3. **Sistema Matemático**: Aplica filtros estatísticos (balanceamento par/ímpar, soma no range ótimo e cobertura de quadrantes) em apostas candidatas.
+4. **Aleatoriedade Pura**: Sorteio completamente randômico usando todos os números do volante.
+5. **Métricas de Auditoria**: Retorna informações sobre apostas rejeitadas e avisos matemáticos sobre a *Falácia do Apostador* ou ilusões de controle.
 
 ### Exemplo de Código
 
 ```dart
-// Gerar 5 apostas para Mega-Sena
+// Gerar 5 apostas para Mega-Sena com Entropia de Shannon
 final usecase = GenerateBetsUsecase();
 final lottery = Lottery.fromType(LotteryType.megaSena);
-final bets = usecase(lottery: lottery, numberOfBets: 5);
+final resultado = usecase.gerarComResultado(
+  lottery: lottery, 
+  numberOfBets: 5,
+  strategy: GenerationStrategy.entropyMixed,
+);
 
-// Resultado: [[5, 10, 23, 33, 42, 53], [4, 17, 30, 37, 44, 56], ...]
+// Acesso às apostas: resultado.apostas
+// Informações extras: resultado.apostasRejeitadas, resultado.avisoMatematico
 ```
 
 ## 🚀 Como Executar
