@@ -19,6 +19,7 @@ algoritmo
 Algoritmo
 algum
 alguma
+alteração
 alterações
 ambiente
 AMÉRICA
@@ -136,6 +137,7 @@ Duplicata
 duplicatas
 Duplicatas
 dúvida
+Econôm
 Econômica
 educacionais
 emitir
@@ -160,6 +162,7 @@ exceção
 Executar
 Exemplo
 exibe
+exibimos
 explica
 Faixa
 falha
@@ -192,6 +195,7 @@ gerência
 Gerenciamento
 GOIÁS
 GRÊMIO
+houve
 ícone
 ícones
 Ícones
@@ -276,6 +280,8 @@ padrão
 página
 PALMEIRAS
 parâmetros
+partir
+passou
 PAYSANDU
 periodicamente
 permissões
@@ -325,6 +331,7 @@ raiz
 randômico
 rápida
 rastreamento
+reajuste
 realista
 reativo
 recentes
@@ -408,6 +415,7 @@ vazios
 Verificação
 Verificamos
 versão
+vigente
 vindas
 VITÓRIA
 você
