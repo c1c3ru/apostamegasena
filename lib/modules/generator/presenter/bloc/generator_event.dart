@@ -14,15 +14,18 @@ class BetsGenerated extends GeneratorEvent {
   final LotteryType lotteryType;
   final int numberOfBets;
   final GenerationStrategy strategy;
+  /// Quantidade de números por jogo escolhida pelo usuário (teimosinha)
+  final int? numberOfNumbers;
 
   const BetsGenerated({
     required this.lotteryType,
     required this.numberOfBets,
     this.strategy = GenerationStrategy.frequentOnly,
+    this.numberOfNumbers,
   });
 
   @override
-  List<Object> get props => [lotteryType, numberOfBets, strategy];
+  List<Object> get props => [lotteryType, numberOfBets, strategy, numberOfNumbers ?? 0];
 }
 
 // Evento disparado ao trocar de tipo de loteria — reseta o estado para limpar apostas antigas

@@ -135,8 +135,14 @@ class GenerateBetsUsecase {
     required Lottery lottery,
     required int numberOfBets,
     GenerationStrategy strategy = GenerationStrategy.frequentOnly,
+    /// Quantidade de dezenas por jogo escolhida pelo usuário.
+    /// Se null, usa [Lottery.numbersToPick] (mínimo/padrão da loteria).
+    /// Será limitado ao intervalo [[Lottery.minNumbersToPick], [Lottery.maxNumbersToPick]].
+    int? numberOfNumbers,
   }) {
-    final int quantidadeAEscolher = lottery.numbersToPick;
+    final int quantidadeAEscolher = (numberOfNumbers != null)
+        ? numberOfNumbers.clamp(lottery.minNumbersToPick, lottery.maxNumbersToPick)
+        : lottery.numbersToPick;
     final List<List<int>> apostas = [];
     final Set<String> apostasUnicas = {};
     int contadorRejeitadas = 0;

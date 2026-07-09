@@ -25,6 +25,20 @@ class _GeneratorPageState extends State<GeneratorPage> {
   final _numberOfBetsController = TextEditingController(text: '1');
   LotteryType _selectedLottery = LotteryType.megaSena;
   GenerationStrategy _selectedStrategy = GenerationStrategy.frequentOnly;
+  /// Quantidade de dezenas por jogo (teimosinha). null = usa o padrão da loteria.
+  int? _selectedNumberCount;
+
+  Lottery get _currentLottery => Lottery.fromType(_selectedLottery);
+
+  void _onLotteryChanged(LotteryType type) {
+    final lottery = Lottery.fromType(type);
+    setState(() {
+      _selectedLottery = type;
+      // Reseta para o mínimo ao trocar de loteria
+      _selectedNumberCount = lottery.minNumbersToPick;
+    });
+    _bloc.add(LotteryTypeChanged(lotteryType: type));
+  }
 
   @override
   void dispose() {
@@ -273,6 +287,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
                   lotteryType: _selectedLottery,
                   numberOfBets: numberOfBets.clamp(1, 20),
                   strategy: _selectedStrategy,
+                  numberOfNumbers: _selectedNumberCount,
                 ));
               },
             ),
@@ -308,11 +323,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 );
               }).toList(),
               onChanged: (type) {
-                if (type != null) {
-                  setState(() => _selectedLottery = type);
-                  // Dispara evento no BLoC para limpar apostas da loteria anterior
-                  _bloc.add(LotteryTypeChanged(lotteryType: type));
-                }
+                if (type != null) _onLotteryChanged(type);
               },
             ),
             const SizedBox(height: 20),
@@ -382,7 +393,14 @@ class _GeneratorPageState extends State<GeneratorPage> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 20),
-            Text('3. Quantas apostas? (1-20)', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            _buildNumberCountSelector(context),
+            const SizedBox(height: 20),
+            Text(
+              _currentLottery.minNumbersToPick == _currentLottery.maxNumbersToPick
+                  ? '3. Quantas apostas? (1-20)'
+                  : '4. Quantas apostas? (1-20)',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: _numberOfBetsController,
@@ -397,6 +415,176 @@ class _GeneratorPageState extends State<GeneratorPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildNumberCountSelector(BuildContext context) {
+    final lottery = _currentLottery;
+    final minPick = lottery.minNumbersToPick;
+    final maxPick = lottery.maxNumbersToPick;
+
+    // Se a loteria não permite variação, não exibe o seletor
+    if (minPick == maxPick) return const SizedBox.shrink();
+
+    final currentCount = _selectedNumberCount ?? minPick;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final priceMap = LotteryData.betPriceTable[lottery.type];
+    final info = priceMap?[currentCount];
+
+    // Rótulo do prêmio principal varia por loteria
+    final String oddsLabel = switch (lottery.type) {
+      LotteryType.megaSena  => 'Probabilidade (sena)',
+      LotteryType.duplaSena => 'Probabilidade (sena)',
+      LotteryType.quina     => 'Probabilidade (quina)',
+      LotteryType.lotofacil => 'Probabilidade (15 acertos)',
+      LotteryType.timemania => 'Probabilidade (prêmio principal)',
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '3. Quantidade de dezenas por jogo',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Selecione de $minPick a $maxPick dezenas. Mais dezenas = maior custo e mais chances.',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(maxPick - minPick + 1, (i) {
+              final count = minPick + i;
+              final isSelected = count == currentCount;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: InkWell(
+                  onTap: () => setState(() => _selectedNumberCount = count),
+                  borderRadius: BorderRadius.circular(10),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeInOut,
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: isSelected ? primaryColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected ? primaryColor : Theme.of(context).dividerColor,
+                        width: isSelected ? 2 : 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: primaryColor.withValues(alpha: 0.35),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '$count',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        color: isSelected
+                            ? Colors.white
+                            : Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+        if (info != null) ...[
+          const SizedBox(height: 10),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOut,
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.07),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: primaryColor.withValues(alpha: 0.25)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.attach_money, size: 16, color: primaryColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Custo por jogo',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'R\$ ${info.cost.toStringAsFixed(2).replaceAll('.', ',')}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 44,
+                  color: primaryColor.withValues(alpha: 0.2),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.emoji_events_outlined, size: 16, color: primaryColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            oddsLabel,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        info.odds,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 

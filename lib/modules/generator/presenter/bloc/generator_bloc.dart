@@ -39,6 +39,7 @@ class GeneratorBloc extends Bloc<GeneratorEvent, GeneratorState> {
         lottery: lottery,
         numberOfBets: event.numberOfBets,
         strategy: event.strategy,
+        numberOfNumbers: event.numberOfNumbers,
       );
 
       // Salvar no histórico

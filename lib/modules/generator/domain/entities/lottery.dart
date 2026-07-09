@@ -9,10 +9,15 @@ enum LotteryType { megaSena, lotofacil, quina, duplaSena, timemania }
 class Lottery extends Equatable {
   final LotteryType type;
   final String name;
+  /// Quantidade padrão/mínima de números por aposta
   final int numbersToPick;
   final List<int> mostFrequentNumbers;
   final int minNumber; // Número mínimo da loteria (ex: 1)
   final int maxNumber; // Número máximo da loteria (ex: 60 para Mega-Sena)
+  /// Quantidade mínima de números que o apostador pode selecionar por jogo
+  final int minNumbersToPick;
+  /// Quantidade máxima de números que o apostador pode selecionar por jogo
+  final int maxNumbersToPick;
 
   const Lottery({
     required this.type,
@@ -21,7 +26,10 @@ class Lottery extends Equatable {
     required this.mostFrequentNumbers,
     this.minNumber = 1,
     this.maxNumber = 60,
-  });
+    int? minNumbersToPick,
+    int? maxNumbersToPick,
+  })  : minNumbersToPick = minNumbersToPick ?? numbersToPick,
+        maxNumbersToPick = maxNumbersToPick ?? numbersToPick;
 
   // Retorna lista completa de números disponíveis (ex: [1, 2, 3, ..., 60])
   List<int> get allNumbers => List.generate(maxNumber - minNumber + 1, (i) => minNumber + i);
@@ -42,5 +50,5 @@ class Lottery extends Equatable {
   }
 
   @override
-  List<Object?> get props => [type, name, numbersToPick, mostFrequentNumbers, minNumber, maxNumber];
+  List<Object?> get props => [type, name, numbersToPick, mostFrequentNumbers, minNumber, maxNumber, minNumbersToPick, maxNumbersToPick];
 }

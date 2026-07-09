@@ -13,6 +13,8 @@ class LotteryData {
     numbersToPick: 6,
     minNumber: 1,
     maxNumber: 60,
+    minNumbersToPick: 6,
+    maxNumbersToPick: 20,
     // Todos os 60 números ordenados por frequência (do mais ao menos sorteado)
     mostFrequentNumbers: [
       10, 53, 37, 5, 27, 32, 34, 38, 42, 33,  // Top 10
@@ -32,6 +34,8 @@ class LotteryData {
     numbersToPick: 15,
     minNumber: 1,
     maxNumber: 25,
+    minNumbersToPick: 15,
+    maxNumbersToPick: 20,
     // Todos os 25 números ordenados por frequência
     mostFrequentNumbers: [
       20, 10, 25, 11, 13, 24, 1, 4, 14, 3,    // Top 10
@@ -48,6 +52,8 @@ class LotteryData {
     numbersToPick: 5,
     minNumber: 1,
     maxNumber: 80,
+    minNumbersToPick: 6,
+    maxNumbersToPick: 15,
     // Todos os 80 números ordenados por frequência
     mostFrequentNumbers: [
       4, 26, 52, 49, 44, 31, 29, 16, 56, 42,   // Top 10
@@ -70,6 +76,8 @@ class LotteryData {
     numbersToPick: 6,
     minNumber: 1,
     maxNumber: 50,
+    minNumbersToPick: 6,
+    maxNumbersToPick: 15,
     // Todos os 50 números ordenados por frequência
     mostFrequentNumbers: [
       36, 30, 39, 35, 18, 46, 31, 49, 11, 9,   // Top 10
@@ -88,6 +96,8 @@ class LotteryData {
     numbersToPick: 10,
     minNumber: 1,
     maxNumber: 80,
+    minNumbersToPick: 10,
+    maxNumbersToPick: 10, // Timemania não permite variação de quantidade
     // Todos os 80 números ordenados por frequência
     mostFrequentNumbers: [
       21, 20, 61, 70, 35, 66, 71, 72, 12, 4,   // Top 10
@@ -122,4 +132,63 @@ class LotteryData {
   };
 
   static const List<Lottery> allLotteries = [megaSena, lotofacil, quina, duplaSena, timemania];
+
+  /// Tabela oficial de preços e probabilidades por quantidade de dezenas.
+  /// Fonte: Caixa Econômica Federal (valores de 2024).
+  /// Chave: LotteryType → (dezenas → ({custo em R$, probabilidade de ganhar o prêmio principal}))
+  static const Map<LotteryType, Map<int, ({double cost, String odds})>> betPriceTable = {
+    LotteryType.megaSena: {
+      6:  (cost: 5.00,      odds: '1 em 50.063.860'),
+      7:  (cost: 35.00,     odds: '1 em 7.151.980'),
+      8:  (cost: 140.00,    odds: '1 em 1.787.995'),
+      9:  (cost: 420.00,    odds: '1 em 595.998'),
+      10: (cost: 1050.00,   odds: '1 em 238.399'),
+      11: (cost: 2310.00,   odds: '1 em 108.363'),
+      12: (cost: 4620.00,   odds: '1 em 54.182'),
+      13: (cost: 8580.00,   odds: '1 em 29.175'),
+      14: (cost: 15015.00,  odds: '1 em 16.671'),
+      15: (cost: 25025.00,  odds: '1 em 10.003'),
+      16: (cost: 40040.00,  odds: '1 em 6.252'),
+      17: (cost: 61880.00,  odds: '1 em 4.042'),
+      18: (cost: 92820.00,  odds: '1 em 2.695'),
+      19: (cost: 135660.00, odds: '1 em 1.843'),
+      20: (cost: 193800.00, odds: '1 em 1.292'),
+    },
+    LotteryType.lotofacil: {
+      15: (cost: 3.00,       odds: '1 em 3.268.760'),
+      16: (cost: 48.00,      odds: '1 em 204.298'),
+      17: (cost: 408.00,     odds: '1 em 24.035'),
+      18: (cost: 2040.00,    odds: '1 em 4.807'),
+      19: (cost: 6120.00,    odds: '1 em 1.602'),
+      20: (cost: 12240.00,   odds: '1 em 801'),
+    },
+    LotteryType.quina: {
+      6:  (cost: 15.00,     odds: '1 em 4.006.669'),
+      7:  (cost: 52.50,     odds: '1 em 1.144.762'),
+      8:  (cost: 105.00,    odds: '1 em 429.286'),
+      9:  (cost: 157.50,    odds: '1 em 200.267'),
+      10: (cost: 210.00,    odds: '1 em 105.140'),
+      11: (cost: 231.00,    odds: '1 em 57.347'),
+      12: (cost: 231.00,    odds: '1 em 31.836'),
+      13: (cost: 195.00,    odds: '1 em 17.974'),
+      14: (cost: 140.00,    odds: '1 em 10.270'),
+      15: (cost: 87.50,     odds: '1 em 5.888'),
+    },
+    LotteryType.duplaSena: {
+      6:  (cost: 2.50,      odds: '1 em 15.890.700'),
+      7:  (cost: 17.50,     odds: '1 em 2.270.100'),
+      8:  (cost: 70.00,     odds: '1 em 567.525'),
+      9:  (cost: 210.00,    odds: '1 em 189.175'),
+      10: (cost: 525.00,    odds: '1 em 75.670'),
+      11: (cost: 1155.00,   odds: '1 em 34.395'),
+      12: (cost: 2310.00,   odds: '1 em 17.198'),
+      13: (cost: 4290.00,   odds: '1 em 9.261'),
+      14: (cost: 7507.50,   odds: '1 em 5.292'),
+      15: (cost: 12512.50,  odds: '1 em 3.175'),
+    },
+    LotteryType.timemania: {
+      10: (cost: 3.00, odds: '1 em 26.827.140'),
+    },
+  };
 }
+

@@ -190,6 +190,7 @@ class _GenerateBetsUsecaseLimiteMinimo extends GenerateBetsUsecase {
     required lottery,
     required int numberOfBets,
     GenerationStrategy strategy = GenerationStrategy.frequentOnly,
+    int? numberOfNumbers,
   }) {
     throw Exception(
       'Não foi possível gerar $numberOfBets apostas únicas após '
