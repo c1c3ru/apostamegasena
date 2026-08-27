@@ -5,8 +5,10 @@
 import '../domain/entities/lottery.dart';
 
 class LotteryData {
-  // Dados atualizados em: Junho/2026 (concurso 3014)
-  // Fonte: https://www.somatematica.com.br/megasenaFrequentes.php
+  // Dados atualizados em: Agosto/2026 (concurso 3048, 23/08/2026)
+  // Fonte: busca web (múltiplas fontes) — acesso direto ao somatematica.com.br
+  // bloqueado neste ambiente; topo e cauda da lista confirmados, posições
+  // intermediárias mantidas da última verificação (Junho/2026, concurso 3014)
   static const Lottery megaSena = Lottery(
     type: LotteryType.megaSena,
     name: 'Mega-Sena',
@@ -17,7 +19,7 @@ class LotteryData {
     maxNumbersToPick: 20,
     // Todos os 60 números ordenados por frequência (do mais ao menos sorteado)
     mostFrequentNumbers: [
-      10, 53, 37, 5, 27, 32, 34, 38, 42, 33,  // Top 10
+      10, 53, 5, 37, 27, 32, 34, 38, 42, 33,  // Top 10
       44, 17, 30, 4, 35, 46, 23, 56, 43, 11,  // Top 20
       41, 54, 28, 13, 16, 36, 49, 52, 6, 51,   // Top 30
       24, 2, 8, 29, 50, 14, 1, 25, 45, 20,    // Top 40
@@ -26,8 +28,10 @@ class LotteryData {
     ],
   );
 
-  // Dados atualizados em: Junho/2026 (concurso 3702)
-  // Fonte: https://www.somatematica.com.br/lotofacilFrequentes.php
+  // Dados atualizados em: Agosto/2026 (concurso 3756, 07/08/2026)
+  // Fonte: busca web (múltiplas fontes) — top 5 (20, 10, 25, 11, 13)
+  // confirmado inalterado; acesso direto ao somatematica.com.br bloqueado
+  // neste ambiente, demais posições mantidas da última verificação
   static const Lottery lotofacil = Lottery(
     type: LotteryType.lotofacil,
     name: 'Lotofácil',
@@ -44,8 +48,10 @@ class LotteryData {
     ],
   );
 
-  // Dados atualizados em: Junho/2026 (concurso 7042)
-  // Fonte: https://www.somatematica.com.br/quinaFrequentes.php
+  // Dados atualizados em: Agosto/2026 (concurso 7098, 21/08/2026)
+  // Fonte: busca web (múltiplas fontes) — top 5 (4, 26, 52, 49, 44)
+  // confirmado, ordem interna sem alteração confiável disponível; acesso
+  // direto ao somatematica.com.br bloqueado neste ambiente
   static const Lottery quina = Lottery(
     type: LotteryType.quina,
     name: 'Quina',
@@ -67,8 +73,10 @@ class LotteryData {
     ],
   );
 
-  // Dados atualizados em: Junho/2026 (concurso 2965)
-  // Fonte: https://www.somatematica.com.br/duplasenaFrequentes.php
+  // Dados atualizados em: Agosto/2026 (concurso 2999, 21/08/2026)
+  // Fonte: busca web (múltiplas fontes) — sem lista completa e verificável
+  // disponível (acesso direto ao somatematica.com.br bloqueado neste
+  // ambiente); ordem mantida da última verificação (Junho/2026)
   // Nota: frequência agrega 1º e 2º sorteios de cada concurso
   static const Lottery duplaSena = Lottery(
     type: LotteryType.duplaSena,
@@ -88,8 +96,10 @@ class LotteryData {
     ],
   );
 
-  // Dados atualizados em: Junho/2026 (concurso 2399)
-  // Fonte: https://www.somatematica.com.br/timemaniaFrequentes.php
+  // Dados atualizados em: Agosto/2026 (concurso 2433, 25/08/2026)
+  // Fonte: busca web (múltiplas fontes) — número mais sorteado (21) e menos
+  // sorteado (53) confirmados inalterados; acesso direto ao
+  // somatematica.com.br bloqueado neste ambiente
   static const Lottery timemania = Lottery(
     type: LotteryType.timemania,
     name: 'Timemania',
