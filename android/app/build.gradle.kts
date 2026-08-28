@@ -48,8 +48,14 @@ android {
 
     buildTypes {
         release {
-            // Signing with the release keys for Play Store submission
-            signingConfig = signingConfigs.getByName("release")
+            // Signing with the release keys for Play Store submission when
+            // android/key.properties is present; otherwise fall back to the
+            // debug key so local/CI release builds still succeed.
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
