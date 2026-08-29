@@ -5,7 +5,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gerador_de_apostas/modules/generator/data/datasources/caixa_api_provider.dart';
 import 'package:gerador_de_apostas/modules/generator/data/repositories/bet_history_repository.dart';
+import 'package:gerador_de_apostas/modules/generator/data/repositories/lottery_repository.dart';
 import 'package:gerador_de_apostas/modules/generator/domain/entities/lottery.dart';
 import 'package:gerador_de_apostas/modules/generator/domain/usecases/generate_bets.dart';
 import 'package:gerador_de_apostas/modules/generator/presenter/bloc/generator_bloc.dart';
@@ -17,6 +19,7 @@ void main() {
   late GeneratorBloc bloc;
   late GenerateBetsUsecase usecase;
   late BetHistoryRepository repositorio;
+  late LotteryRepository lotteryRepository;
 
   setUp(() {
     // Configura SharedPreferences com dados vazios para o ambiente de teste
@@ -34,7 +37,8 @@ void main() {
 
     usecase = GenerateBetsUsecase();
     repositorio = BetHistoryRepository();
-    bloc = GeneratorBloc(usecase, repositorio);
+    lotteryRepository = LotteryRepository(CaixaApiProvider());
+    bloc = GeneratorBloc(usecase, repositorio, lotteryRepository);
   });
 
   tearDown(() {
@@ -51,7 +55,7 @@ void main() {
       'deve emitir [GeneratorLoading, GeneratorSuccess] ao gerar apostas da Mega-Sena',
       build: () {
         SharedPreferences.setMockInitialValues({});
-        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository());
+        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository(), LotteryRepository(CaixaApiProvider()));
       },
       act: (bloc) => bloc.add(
         const BetsGenerated(
@@ -71,7 +75,7 @@ void main() {
       'deve emitir [GeneratorLoading, GeneratorSuccess] ao gerar apostas da Lotofácil',
       build: () {
         SharedPreferences.setMockInitialValues({});
-        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository());
+        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository(), LotteryRepository(CaixaApiProvider()));
       },
       act: (bloc) => bloc.add(
         const BetsGenerated(
@@ -92,7 +96,7 @@ void main() {
       'deve emitir [GeneratorLoading, GeneratorSuccess] ao gerar apostas da Quina',
       build: () {
         SharedPreferences.setMockInitialValues({});
-        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository());
+        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository(), LotteryRepository(CaixaApiProvider()));
       },
       act: (bloc) => bloc.add(
         const BetsGenerated(
@@ -113,7 +117,7 @@ void main() {
       'deve emitir [GeneratorLoading, GeneratorSuccess] ao gerar apostas da Dupla Sena',
       build: () {
         SharedPreferences.setMockInitialValues({});
-        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository());
+        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository(), LotteryRepository(CaixaApiProvider()));
       },
       act: (bloc) => bloc.add(
         const BetsGenerated(
@@ -136,7 +140,7 @@ void main() {
         SharedPreferences.setMockInitialValues({});
         // Usecase customizado com limites mínimos para forçar falha rápida no teste
         final usecaseLimiteMinimo = _GenerateBetsUsecaseLimiteMinimo();
-        return GeneratorBloc(usecaseLimiteMinimo, BetHistoryRepository());
+        return GeneratorBloc(usecaseLimiteMinimo, BetHistoryRepository(), LotteryRepository(CaixaApiProvider()));
       },
       act: (bloc) => bloc.add(
         // Pool de 25 números, escolhendo 15 (Lotofácil), com 20 apostas distintas
@@ -162,7 +166,7 @@ void main() {
       'deve usar a estratégia sistemaMatematico ao ser solicitado',
       build: () {
         SharedPreferences.setMockInitialValues({});
-        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository());
+        return GeneratorBloc(GenerateBetsUsecase(), BetHistoryRepository(), LotteryRepository(CaixaApiProvider()));
       },
       act: (bloc) => bloc.add(
         const BetsGenerated(

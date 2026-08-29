@@ -30,6 +30,14 @@ class _GeneratorPageState extends State<GeneratorPage> {
 
   Lottery get _currentLottery => Lottery.fromType(_selectedLottery);
 
+  @override
+  void initState() {
+    super.initState();
+    // Busca o concurso mais recente da Mega-Sena na API da Caixa em segundo
+    // plano; se falhar, o bloc mantém os dados do último cache válido.
+    _bloc.add(const RefreshMegaSenaFrequencies());
+  }
+
   void _onLotteryChanged(LotteryType type) {
     final lottery = Lottery.fromType(type);
     setState(() {

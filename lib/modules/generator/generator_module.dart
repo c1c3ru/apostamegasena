@@ -2,7 +2,9 @@
 // ARQUIVO: lib/modules/generator/generator_module.dart
 // =========================================================================
 import 'package:flutter_modular/flutter_modular.dart';
+import './data/datasources/caixa_api_provider.dart';
 import './data/repositories/bet_history_repository.dart';
+import './data/repositories/lottery_repository.dart';
 import './domain/usecases/generate_bets.dart';
 import './presenter/bloc/generator_bloc.dart';
 import './presenter/generator_page.dart';
@@ -15,6 +17,9 @@ class GeneratorModule extends Module {
   void binds(i) {
     // Repository
     i.addSingleton(BetHistoryRepository.new);
+    // Datasource + repository de resultados da Caixa (frequências dinâmicas)
+    i.addSingleton(CaixaApiProvider.new);
+    i.addSingleton(LotteryRepository.new);
     // Usecase
     i.addSingleton(GenerateBetsUsecase.new);
     // BLoC

@@ -34,6 +34,21 @@ class Lottery extends Equatable {
   // Retorna lista completa de números disponíveis (ex: [1, 2, 3, ..., 60])
   List<int> get allNumbers => List.generate(maxNumber - minNumber + 1, (i) => minNumber + i);
 
+  /// Cria uma cópia substituindo apenas [mostFrequentNumbers] — usado para
+  /// injetar frequências recalculadas dinamicamente (ex: dados atualizados da API).
+  Lottery copyWith({List<int>? mostFrequentNumbers}) {
+    return Lottery(
+      type: type,
+      name: name,
+      numbersToPick: numbersToPick,
+      mostFrequentNumbers: mostFrequentNumbers ?? this.mostFrequentNumbers,
+      minNumber: minNumber,
+      maxNumber: maxNumber,
+      minNumbersToPick: minNumbersToPick,
+      maxNumbersToPick: maxNumbersToPick,
+    );
+  }
+
   static Lottery fromType(LotteryType type) {
     switch (type) {
       case LotteryType.megaSena:

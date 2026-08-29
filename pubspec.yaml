@@ -29,6 +29,9 @@ dependencies:
   # Persistência local
   shared_preferences: ^2.2.2
 
+  # Cliente HTTP (consumo da API de resultados da Caixa)
+  http: ^1.2.0
+
   # Compartilhamento — v9.x é estável no Android 12+ e Flutter 3.x
   share_plus: ^9.0.0
 

@@ -4,6 +4,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/bet_history_repository.dart';
+import '../../data/repositories/lottery_repository.dart';
 import '../../domain/entities/bet_history.dart';
 import '../../domain/entities/lottery.dart';
 import '../../domain/usecases/generate_bets.dart';
@@ -14,10 +15,37 @@ part 'generator_state.dart';
 class GeneratorBloc extends Bloc<GeneratorEvent, GeneratorState> {
   final GenerateBetsUsecase _generateBetsUsecase;
   final BetHistoryRepository _historyRepository;
+  final LotteryRepository _lotteryRepository;
 
-  GeneratorBloc(this._generateBetsUsecase, this._historyRepository) : super(GeneratorInitial()) {
+  // Frequências da Mega-Sena recalculadas a partir do último concurso buscado
+  // na API da Caixa. Fica null até a primeira atualização bem-sucedida (ou
+  // com fallback de cache) responder — até lá usa-se o valor estático padrão.
+  List<int>? _freshMegaSenaFrequencies;
+
+  GeneratorBloc(
+    this._generateBetsUsecase,
+    this._historyRepository,
+    this._lotteryRepository,
+  ) : super(GeneratorInitial()) {
     on<BetsGenerated>(_onBetsGenerated);
     on<LotteryTypeChanged>(_onLotteryTypeChanged);
+    on<RefreshMegaSenaFrequencies>(_onRefreshMegaSenaFrequencies);
+  }
+
+  // Busca em segundo plano — não emite estados de loading/erro pois não deve
+  // interferir na tela de geração de apostas; apenas atualiza o dado interno
+  // usado na próxima geração da Mega-Sena.
+  Future<void> _onRefreshMegaSenaFrequencies(
+    RefreshMegaSenaFrequencies event,
+    Emitter<GeneratorState> emit,
+  ) async {
+    try {
+      final result = await _lotteryRepository.refreshMegaSenaFrequencies();
+      _freshMegaSenaFrequencies = result.mostFrequentNumbers;
+    } catch (_) {
+      // Falha inesperada fora do fluxo de retry do repositório: mantém o
+      // valor estático padrão (LotteryData.megaSena.mostFrequentNumbers).
+    }
   }
 
   // Reseta o estado ao trocar de loteria para evitar exibir apostas da loteria anterior
@@ -34,7 +62,10 @@ class GeneratorBloc extends Bloc<GeneratorEvent, GeneratorState> {
   ) async {
     emit(GeneratorLoading());
     try {
-      final lottery = Lottery.fromType(event.lotteryType);
+      var lottery = Lottery.fromType(event.lotteryType);
+      if (event.lotteryType == LotteryType.megaSena && _freshMegaSenaFrequencies != null) {
+        lottery = lottery.copyWith(mostFrequentNumbers: _freshMegaSenaFrequencies);
+      }
       final resultado = _generateBetsUsecase.gerarComResultado(
         lottery: lottery,
         numberOfBets: event.numberOfBets,

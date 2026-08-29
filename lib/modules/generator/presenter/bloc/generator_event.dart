@@ -37,3 +37,9 @@ class LotteryTypeChanged extends GeneratorEvent {
   @override
   List<Object> get props => [lotteryType];
 }
+
+// Disparado na inicialização do app para buscar o último concurso da Mega-Sena
+// na API da Caixa e recalcular as dezenas mais frequentes em segundo plano.
+class RefreshMegaSenaFrequencies extends GeneratorEvent {
+  const RefreshMegaSenaFrequencies();
+}
