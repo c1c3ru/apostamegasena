@@ -3,7 +3,6 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -17,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.c1c3ru.apostamegasena"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -49,14 +48,8 @@ android {
 
     buildTypes {
         release {
-            // Signing with the release keys for Play Store submission when
-            // android/key.properties is present; otherwise fall back to the
-            // debug key so local/CI release builds still succeed.
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            // Signing with the release keys for Play Store submission
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }

@@ -1,5 +1,7 @@
 # 🍀 Gerador de Apostas - Loterias Brasileiras
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Aplicação Flutter para geração inteligente de apostas para as principais loterias brasileiras: **Mega-Sena**, **Lotofácil**, **Quina**, **Dupla Sena** e **Timemania**.
 
 ## 📱 Funcionalidades
@@ -167,7 +169,7 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 
 ## 📝 Licença
 
-Este projeto é de código aberto e está disponível sob a licença MIT.
+Este projeto é de código aberto e está disponível sob a licença [MIT](LICENSE).
 
 ## ⚠️ Aviso Legal
 
