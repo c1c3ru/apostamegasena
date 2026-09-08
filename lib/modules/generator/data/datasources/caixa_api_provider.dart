@@ -32,6 +32,9 @@ class CaixaApiProvider {
   CaixaApiProvider({http.Client? client, this.timeout = const Duration(seconds: 8)})
       : _client = client ?? http.Client();
 
+  /// Endpoint consultado — exposto apenas para diagnóstico (tela de status da API).
+  String get megaSenaEndpoint => _megaSenaUrl;
+
   /// Busca o último concurso da Mega-Sena.
   /// Lança [TimeoutException] em caso de demora excessiva, [CaixaApiException]
   /// para status HTTP != 200, e [FormatException] se o payload não puder ser
