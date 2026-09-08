@@ -12,6 +12,7 @@ import './bloc/generator_bloc.dart';
 import '../domain/entities/lottery.dart';
 import '../domain/usecases/generate_bets.dart';
 import './widgets/bet_card.dart';
+import './widgets/about_section.dart';
 
 class GeneratorPage extends StatefulWidget {
   const GeneratorPage({Key? key}) : super(key: key);
@@ -301,6 +302,8 @@ class _GeneratorPageState extends State<GeneratorPage> {
             ),
             const SizedBox(height: 24),
             _buildResults(),
+            const SizedBox(height: 8),
+            const AboutSection(),
           ],
         ),
       ),

@@ -38,6 +38,9 @@ dependencies:
   # Formatação de datas
   intl: ^0.18.1
 
+  # Nome, versão e build do app (tela "Sobre")
+  package_info_plus: ^10.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
